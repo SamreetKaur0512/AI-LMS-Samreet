@@ -23,12 +23,6 @@ dotenv.config();
 
 const PORT = process.env.PORT || 4000;
 
-// Allowed origins: local dev + deployed frontend URL
-const allowedOrigins = [
-  "http://localhost:3000",
-  process.env.FRONTEND_URL,
-].filter(Boolean);
-
 // Database connect
 database.connect();
 startQuizScheduler();
@@ -36,14 +30,19 @@ startQuizScheduler();
 // Middlewares
 app.use(express.json());
 app.use(cookieParser());
+
+// CORS - allow all Vercel deployments + localhost
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (e.g. mobile apps, curl)
+      // Allow requests with no origin (mobile apps, curl, Render health checks)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+      // Allow localhost for development
+      if (origin.startsWith("http://localhost")) return callback(null, true);
+      // Allow all vercel.app subdomains
+      if (origin.endsWith(".vercel.app")) return callback(null, true);
+      // Allow specific frontend URL from env
+      if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) return callback(null, true);
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
@@ -54,6 +53,8 @@ app.use(
   fileUpload({
     useTempFiles: true,
     tempFileDir: "/tmp",
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+    abortOnLimit: false,
   })
 );
 
@@ -72,7 +73,7 @@ app.use("/api/v1/timetable", timetableRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/recommendation", recommendationRoutes);
 
-// Health check / default route
+// Health check
 app.get("/", (req, res) => {
   return res.json({
     success: true,

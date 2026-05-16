@@ -17,15 +17,16 @@ exports.contactUsController = async (req, res) => {
     })
     await contact.save()
 
-    const emailRes = await mailSender(
+    // Send email in background - don't make user wait
+    mailSender(
       email,
       "Your Data send successfully",
       contactUsEmail(email, firstname, lastname, message, phoneNo, countrycode)
-    )
-    console.log("Email Res ", emailRes)
+    ).catch(err => console.log("Contact email error:", err))
+
     return res.json({
       success: true,
-      message: "Email send successfully",
+      message: "Message sent successfully",
     })
   } catch (error) {
     console.log("Error", error)
