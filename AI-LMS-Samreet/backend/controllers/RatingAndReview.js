@@ -28,11 +28,15 @@ exports.createRating = async (req, res) => {
                                                 course:courseId,
                                             });
         if(alreadyReviewed) {
-                    return res.status(403).json({
-                        success:false,
-                        message:'Course is already reviewed by the user',
-                    });
-                }
+            alreadyReviewed.rating = rating
+            alreadyReviewed.review = review
+            await alreadyReviewed.save()
+            return res.status(200).json({
+                success:true,
+                message:'Rating and Review updated Successfully',
+                ratingReview: alreadyReviewed,
+            })
+        }
         //create rating and review
         const ratingReview = await RatingAndReview.create({
                                         rating, review, 
