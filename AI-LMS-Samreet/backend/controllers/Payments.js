@@ -91,7 +91,7 @@ exports.verifyPayment = async (req, res) => {
     }
 
     const enrolledStudent = await User.findById(userId)
-    const mailResponse = await mailSender(
+    mailSender(
       enrolledStudent.email,
       "Payment Received",
       paymentSuccessEmail(
@@ -100,11 +100,7 @@ exports.verifyPayment = async (req, res) => {
         razorpay_order_id,
         razorpay_payment_id
       )
-    )
-
-    if (!mailResponse) {
-      console.log("Payment confirmation email could not be delivered")
-    }
+    ).catch((err) => console.log("Payment confirmation email error:", err))
 
     return res.status(200).json({ success: true, message: "Payment Verified" })
   } catch (error) {
@@ -158,7 +154,7 @@ const enrollStudents = async (courses, userId) => {
     try {
       const enrolledCourse = await Course.findOneAndUpdate(
         { _id: courseId },
-        { $push: { studentsEnrolled: userId } },
+        { $addToSet: { studentsEnrolled: userId } },
         { new: true }
       )
 
@@ -175,10 +171,10 @@ const enrollStudents = async (courses, userId) => {
       enrolledStudent = await User.findByIdAndUpdate(
         userId,
         {
-          $push: {
+          $addToSet: {
             courses: courseId,
-            courseProgress: courseProgress._id,
           },
+          $push: { courseProgress: courseProgress._id },
         },
         { new: true }
       )
