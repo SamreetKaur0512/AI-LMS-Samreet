@@ -3,8 +3,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { apiConnector } from "../services/apiconnector"
 import { QUIZ_ENDPOINTS } from "../services/apis"
-import { FaBrain, FaCheckCircle, FaTimesCircle, FaTrophy } from "react-icons/fa"
-
+import { FaCheckCircle, FaTimesCircle, FaTrophy } from "react-icons/fa"
 const QuizPage = () => {
   const { quizId } = useParams()
   const navigate = useNavigate()
