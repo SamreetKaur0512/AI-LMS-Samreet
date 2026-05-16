@@ -109,8 +109,26 @@ function CourseDetails() {
     studentsEnrolled,
     createdAt,
   } = response.data?.courseDetails
+  const isFreeCourse = Number(price) === 0
+  const firstSection = courseContent?.[0]
+  const firstSubSection = firstSection?.subSection?.[0]
+  const canStartCourse = firstSection?._id && firstSubSection?._id
+
+  const handleStartCourse = () => {
+    if (!canStartCourse) {
+      toast.error("This course has no lessons yet.")
+      return
+    }
+    navigate(
+      `/view-course/${courseId}/section/${firstSection._id}/sub-section/${firstSubSection._id}`
+    )
+  }
 
   const handleBuyCourse = () => {
+    if (isFreeCourse) {
+      handleStartCourse()
+      return
+    }
     if (token) {
       buyCourse(token, [courseId], user, navigate, dispatch)
       return
@@ -224,12 +242,12 @@ function CourseDetails() {
             </div>
             <div className="flex w-full flex-col gap-4 border-y border-y-richblack-500 py-4 lg:hidden">
               <p className="space-x-3 pb-4 text-3xl font-semibold text-richblack-5">
-                Rs. {price}
+                {isFreeCourse ? "Free" : `Rs. ${price}`}
               </p>
               <button className="yellowButton" onClick={handleBuyCourse}>
-                Buy Now
+                {isFreeCourse ? "Start Learning" : "Buy Now"}
               </button>
-              <button className="blackButton">Add to Cart</button>
+              {!isFreeCourse && <button className="blackButton">Add to Cart</button>}
             </div>
           </div>
           {/* Courses Card */}

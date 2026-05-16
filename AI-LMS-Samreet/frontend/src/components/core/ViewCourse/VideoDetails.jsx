@@ -29,7 +29,7 @@ const VideoDetails = () => {
     ;(async () => {
       if (!courseSectionData.length) return
       if (!courseId && !sectionId && !subSectionId) {
-        navigate(`/dashboard/enrolled-courses`)
+        navigate(token ? `/dashboard/enrolled-courses` : "/")
       } else {
         // console.log("courseSectionData", courseSectionData)
         const filteredData = courseSectionData.filter(
@@ -195,7 +195,7 @@ const VideoDetails = () => {
               }}
               className="full absolute inset-0 z-[100] grid h-full place-content-center font-inter"
             >
-              {!completedLectures.includes(subSectionId) && (
+              {token && !completedLectures.includes(subSectionId) && (
                 <IconBtn
                   disabled={loading}
                   onclick={() => handleLectureCompletion()}

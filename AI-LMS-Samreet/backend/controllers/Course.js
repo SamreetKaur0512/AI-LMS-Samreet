@@ -38,7 +38,9 @@ exports.createCourse = async (req, res) => {
       !courseName ||
       !courseDescription ||
       !whatYouWillLearn ||
-      !price ||
+      price === undefined ||
+      price === null ||
+      price === "" ||
       !tag.length ||
       !thumbnail ||
       !category ||
@@ -410,6 +412,63 @@ exports.getFullCourseDetails = async (req, res) => {
         completedVideos: courseProgressCount?.completedVideos
           ? courseProgressCount?.completedVideos
           : [],
+      },
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    })
+  }
+}
+
+exports.getFreeCourseDetails = async (req, res) => {
+  try {
+    const { courseId } = req.body
+    const courseDetails = await Course.findOne({
+      _id: courseId,
+      price: 0,
+      status: "Published",
+    })
+      .populate({
+        path: "instructor",
+        populate: {
+          path: "additionalDetails",
+        },
+      })
+      .populate("category")
+      .populate("ratingAndReviews")
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+        },
+      })
+      .exec()
+
+    if (!courseDetails) {
+      return res.status(403).json({
+        success: false,
+        message: "This course is not available for free access",
+      })
+    }
+
+    let totalDurationInSeconds = 0
+    courseDetails.courseContent.forEach((content) => {
+      content.subSection.forEach((subSection) => {
+        const timeDurationInSeconds = parseInt(subSection.timeDuration)
+        totalDurationInSeconds += timeDurationInSeconds
+      })
+    })
+
+    const totalDuration = convertSecondsToDuration(totalDurationInSeconds)
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        courseDetails,
+        totalDuration,
+        completedVideos: [],
       },
     })
   } catch (error) {

@@ -10,6 +10,7 @@ const {
   getAllCourses,
   getCourseDetails,
   getFullCourseDetails,
+  getFreeCourseDetails,
   editCourse,
   getInstructorCourses,
   deleteCourse,
@@ -75,6 +76,7 @@ router.get("/getAllCourses", getAllCourses)
 router.post("/getCourseDetails", getCourseDetails)
 // Get Details for a Specific Courses
 router.post("/getFullCourseDetails", auth, getFullCourseDetails)
+router.post("/getFreeCourseDetails", getFreeCourseDetails)
 // Edit Course routes
 router.post("/editCourse", auth, isInstructor, editCourse)
 // Get all Courses Under a Specific Instructor

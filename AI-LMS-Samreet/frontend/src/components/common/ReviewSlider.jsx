@@ -11,7 +11,7 @@ import "../../App.css"
 // Icons
 import { FaStar } from "react-icons/fa"
 // Import required modules
-import { Autoplay, FreeMode, Pagination } from "swiper"
+import { FreeMode, Pagination } from "swiper"
 
 // Get apiFunction and the endpoint
 import { apiConnector } from "../../services/apiconnector"
@@ -41,13 +41,9 @@ function ReviewSlider() {
         <Swiper
           slidesPerView={4}
           spaceBetween={25}
-          loop={true}
+          loop={false}
           freeMode={true}
           autoHeight={true}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-          }}
           breakpoints={{
             320: {
               slidesPerView: 1,
@@ -62,7 +58,7 @@ function ReviewSlider() {
               slidesPerView: 4,
             },
           }}
-          modules={[FreeMode, Pagination, Autoplay]}
+          modules={[FreeMode, Pagination]}
           className="w-full"
         >
           {reviews.map((review, i) => {

@@ -19,6 +19,7 @@ const {
   GET_ALL_INSTRUCTOR_COURSES_API,
   DELETE_COURSE_API,
   GET_FULL_COURSE_DETAILS_AUTHENTICATED,
+  GET_FREE_COURSE_DETAILS_API,
   CREATE_RATING_API,
   LECTURE_COMPLETION_API,
 } = courseEndpoints
@@ -332,6 +333,29 @@ export const getFullDetailsOfCourse = async (courseId, token) => {
   }
   toast.dismiss(toastId)
   //   dispatch(setLoading(false));
+  return result
+}
+
+export const getFreeCourseDetails = async (courseId) => {
+  const toastId = toast.loading("Loading...")
+  let result = null
+  try {
+    const response = await apiConnector("POST", GET_FREE_COURSE_DETAILS_API, {
+      courseId,
+    })
+
+    if (!response.data.success) {
+      throw new Error(response.data.message)
+    }
+    result = response?.data?.data
+  } catch (error) {
+    console.log("GET_FREE_COURSE_DETAILS_API ERROR............", error)
+    result = error?.response?.data || {
+      success: false,
+      message: error.message,
+    }
+  }
+  toast.dismiss(toastId)
   return result
 }
 

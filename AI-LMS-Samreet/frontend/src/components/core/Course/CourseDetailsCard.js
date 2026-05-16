@@ -21,6 +21,10 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
     price: CurrentPrice,
     _id: courseId,
   } = course
+  const isFreeCourse = Number(CurrentPrice) === 0
+  const firstSection = course?.courseContent?.[0]
+  const firstSubSection = firstSection?.subSection?.[0]
+  const canStartCourse = firstSection?._id && firstSubSection?._id
 
   const handleShare = () => {
     copy(window.location.href)
@@ -62,10 +66,10 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
 
         <div className="px-4">
           <div className="space-x-3 pb-4 text-3xl font-semibold">
-            Rs. {CurrentPrice}
+            {isFreeCourse ? "Free" : `Rs. ${CurrentPrice}`}
           </div>
           <div className="flex flex-col gap-4">
-            {user?.accountType === ACCOUNT_TYPE.ADMIN ? (
+            {user?.accountType === ACCOUNT_TYPE.ADMIN && !isFreeCourse ? (
               <div className="rounded-lg bg-richblack-600 border border-richblack-500 px-4 py-3 text-center text-sm text-richblack-300">
                 👁️ Admin View — Purchase not available
               </div>
@@ -74,16 +78,23 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
                 <button
                   className="yellowButton"
                   onClick={
-                    user && course?.studentsEnrolled.includes(user?._id)
+                    isFreeCourse && canStartCourse
+                      ? () =>
+                          navigate(
+                            `/view-course/${courseId}/section/${firstSection._id}/sub-section/${firstSubSection._id}`
+                          )
+                      : user && course?.studentsEnrolled.includes(user?._id)
                       ? () => navigate("/dashboard/enrolled-courses")
                       : handleBuyCourse
                   }
                 >
-                  {user && course?.studentsEnrolled.includes(user?._id)
+                  {isFreeCourse
+                    ? "Start Learning"
+                    : user && course?.studentsEnrolled.includes(user?._id)
                     ? "Go To Course"
                     : "Buy Now"}
                 </button>
-                {(!user || !course?.studentsEnrolled.includes(user?._id)) && (
+                {!isFreeCourse && (!user || !course?.studentsEnrolled.includes(user?._id)) && (
                   <button onClick={handleAddToCart} className="blackButton">
                     Add to Cart
                   </button>
@@ -92,9 +103,11 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
             )}
           </div>
           <div>
-            <p className="pb-3 pt-6 text-center text-sm text-richblack-25">
-              30-Day Money-Back Guarantee
-            </p>
+            {!isFreeCourse && (
+              <p className="pb-3 pt-6 text-center text-sm text-richblack-25">
+                30-Day Money-Back Guarantee
+              </p>
+            )}
           </div>
 
           <div className={``}>
