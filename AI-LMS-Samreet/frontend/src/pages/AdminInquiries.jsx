@@ -37,10 +37,11 @@ const AdminInquiries = () => {
     }
   }
 
-  useEffect(() => {
-    fetchInquiries()
-  }, [])
-
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+// eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => {
+  fetchInquiries()
+}, [])
   return (
     <div className="min-h-screen bg-richblack-900 text-white p-8">
       <div className="max-w-7xl mx-auto">
