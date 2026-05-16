@@ -2,11 +2,15 @@ const nodemailer = require("nodemailer")
 
 const mailSender = async (email, title, body) => {
   try {
+    // Try Gmail service first (most reliable)
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
       },
     })
 
@@ -21,7 +25,7 @@ const mailSender = async (email, title, body) => {
     return info
   } catch (error) {
     console.log("Mail error:", error.message)
-    return null
+    return null  // Never throw - caller handles null
   }
 }
 
