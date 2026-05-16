@@ -9,7 +9,6 @@ const AdminInquiries = () => {
   const [inquiries, setInquiries] = useState([])
   const [loading, setLoading] = useState(false)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchInquiries = async () => {
     setLoading(true)
     try {
@@ -38,6 +37,7 @@ const AdminInquiries = () => {
     }
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchInquiries()
   }, [])

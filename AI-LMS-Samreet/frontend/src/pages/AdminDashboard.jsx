@@ -333,6 +333,7 @@ export default function AdminDashboard() {
 
   // Redirect non-admins
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (user && user.accountType !== "Admin") navigate("/dashboard/my-profile")
   }, [user])
