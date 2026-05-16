@@ -1,0 +1,19 @@
+{
+  "name": "eduai-lms",
+  "version": "1.0.0",
+  "description": "AI-Based Learning Management System - B.Tech Final Year Project by Samreet Kaur | AGC Amritsar",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix frontend && npm install --prefix backend",
+    "start:frontend": "npm start --prefix frontend",
+    "start:backend": "npm start --prefix backend",
+    "dev:frontend": "npm start --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev": "concurrently -n \"frontend,backend\" -c \"bgBlue,bgYellow\" \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "build": "npm run build --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.1"
+  },
+  "author": "Samreet Kaur | AGC Amritsar"
+}
