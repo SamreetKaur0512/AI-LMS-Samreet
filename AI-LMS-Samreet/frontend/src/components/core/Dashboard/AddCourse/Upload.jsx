@@ -63,9 +63,12 @@ export default function Upload({
         className={`${
           isDragActive ? "bg-richblack-600" : "bg-richblack-700"
         } flex min-h-[250px] cursor-pointer items-center justify-center rounded-md border-2 border-dotted border-richblack-500`}
+        {...getRootProps()}
+        onClick={() => inputRef.current && inputRef.current.click()}
       >
+        <input {...getInputProps()} ref={inputRef} />
         {previewSource ? (
-          <div className="flex w-full flex-col p-6">
+          <div className="flex w-full flex-col p-6" onClick={(e) => e.stopPropagation()}>
             {!video ? (
               <img
                 src={previewSource}
@@ -78,7 +81,8 @@ export default function Upload({
             {!viewData && (
               <button
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation()
                   setPreviewSource("")
                   setSelectedFile(null)
                   setValue(name, null)
@@ -90,11 +94,7 @@ export default function Upload({
             )}
           </div>
         ) : (
-          <div
-            className="flex w-full flex-col items-center p-6"
-            {...getRootProps()}
-          >
-            <input {...getInputProps()} ref={inputRef} />
+          <div className="flex w-full flex-col items-center p-6">
             <div className="grid aspect-square w-14 place-items-center rounded-full bg-pure-greys-800">
               <FiUploadCloud className="text-2xl text-yellow-50" />
             </div>

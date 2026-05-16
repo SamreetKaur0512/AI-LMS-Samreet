@@ -17,12 +17,29 @@ exports.contactUsController = async (req, res) => {
     })
     await contact.save()
 
-    // Send email in background - don't make user wait
+    // Send confirmation email to user (background)
     mailSender(
       email,
-      "Your Data send successfully",
+      "We received your message - EduAI LMS",
       contactUsEmail(email, firstname, lastname, message, phoneNo, countrycode)
-    ).catch(err => console.log("Contact email error:", err))
+    ).catch(err => console.log("Contact user email error:", err))
+
+    // Send notification email to admin (background)
+    mailSender(
+      process.env.MAIL_USER,
+      `New Contact Form Message from ${firstname} ${lastname}`,
+      `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f9f9f9;border-radius:8px;">
+        <h2 style="color:#FFD60A;">New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${firstname} ${lastname}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${countrycode} ${phoneNo}</p>
+        <p><strong>Message:</strong></p>
+        <div style="background:#fff;padding:15px;border-left:4px solid #FFD60A;border-radius:4px;">
+          ${message}
+        </div>
+        <p style="color:#999;font-size:12px;margin-top:20px;">Received on ${new Date().toLocaleString("en-IN")}</p>
+      </div>`
+    ).catch(err => console.log("Contact admin email error:", err))
 
     return res.json({
       success: true,

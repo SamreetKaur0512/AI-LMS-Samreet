@@ -119,6 +119,13 @@ exports.updateDisplayPicture = async (req, res) => {
     console.log("DEBUG: Request Files ->", req.files);
     console.log("DEBUG: User ID from Token ->", req.user.id);
 
+    if (!req.files || !req.files.displayPicture) {
+      return res.status(400).json({
+        success: false,
+        message: "No image file provided",
+      })
+    }
+
     const displayPicture = req.files.displayPicture
     const userId = req.user.id
     const image = await uploadImageToCloudinary(
