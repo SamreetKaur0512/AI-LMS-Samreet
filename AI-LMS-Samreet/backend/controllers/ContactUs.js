@@ -17,15 +17,19 @@ exports.contactUsController = async (req, res) => {
     })
     await contact.save()
 
-    // Send confirmation email to user
-    const contactEmailResult = await mailSender(
+    res.json({
+      success: true,
+      message: "Message sent successfully",
+    })
+
+    // Send emails asynchronously after returning response
+    mailSender(
       email,
       "We received your message - EduAI LMS",
       contactUsEmail(email, firstname, lastname, message, phoneNo, countrycode)
-    )
+    ).catch(err => console.log("Contact user email error:", err))
 
-    // Send notification email to admin
-    const adminEmailResult = await mailSender(
+    mailSender(
       process.env.MAIL_USER,
       `New Contact Form Message from ${firstname} ${lastname}`,
       `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f9f9f9;border-radius:8px;">
@@ -39,20 +43,7 @@ exports.contactUsController = async (req, res) => {
         </div>
         <p style="color:#999;font-size:12px;margin-top:20px;">Received on ${new Date().toLocaleString("en-IN")}</p>
       </div>`
-    )
-
-    if (!contactEmailResult || !adminEmailResult) {
-      console.log("Contact email delivery failed")
-      return res.status(500).json({
-        success: false,
-        message: "Message saved but email delivery failed. Please try again later.",
-      })
-    }
-
-    return res.json({
-      success: true,
-      message: "Message sent successfully",
-    })
+    ).catch(err => console.log("Contact admin email error:", err))
   } catch (error) {
     console.log("Error", error)
     console.log("Error message :", error.message)
