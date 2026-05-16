@@ -3,7 +3,7 @@ import { useSelector } from "react-redux"
 import { apiConnector } from "../../../services/apiconnector"
 import { TIMETABLE_ENDPOINTS } from "../../../services/apis"
 import {
-  FaBrain, FaCalendarAlt, FaClock, FaFire, FaCheckCircle,
+  FaBrain, FaCalendarAlt, FaFire, FaCheckCircle,
   FaExclamationTriangle, FaRocket, FaEdit, FaTrash, FaTimes, FaSave,
 } from "react-icons/fa"
 
