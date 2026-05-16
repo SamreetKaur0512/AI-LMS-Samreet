@@ -102,7 +102,7 @@ const AdminInquiries = () => {
                       {inquiry.status !== 'Resolved' && (
                         <button
                           onClick={() => markAsResolved(inquiry._id)}
-                          className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                          className="cursor-pointer px-3 py-2 rounded-lg bg-indigo-900/40 border border-indigo-600 text-indigo-300 text-sm hover:bg-indigo-900/70 transition-all"
                         >
                           Mark Resolved
                         </button>

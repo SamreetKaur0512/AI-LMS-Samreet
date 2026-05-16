@@ -210,9 +210,9 @@ const UserModal = ({ userId, token, onClose, onRefresh }) => {
           {/* Additional Info */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: "Gender", value: user.additionalDetails?.gender || "—" },
-              { label: "Contact", value: user.additionalDetails?.contactNumber || "—" },
-              { label: "DOB", value: user.additionalDetails?.dateOfBirth || "—" },
+              { label: "Gender", value: (typeof user.additionalDetails === "object" ? user.additionalDetails?.gender : null) || "—" },
+              { label: "Contact", value: (typeof user.additionalDetails === "object" ? user.additionalDetails?.contactNumber : null) || "—" },
+              { label: "DOB", value: (typeof user.additionalDetails === "object" ? user.additionalDetails?.dateOfBirth : null) || "—" },
               { label: "Courses", value: user.courses?.length || 0 },
             ].map(({ label, value }) => (
               <div key={label} className="rounded-lg bg-richblack-700 px-3 py-2 text-center">
@@ -234,7 +234,7 @@ const UserModal = ({ userId, token, onClose, onRefresh }) => {
                     <img src={course.thumbnail} alt="" className="h-10 w-14 rounded object-cover flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-richblack-100 text-sm font-medium truncate">{course.courseName}</p>
-                      <p className="text-richblack-400 text-xs">₹{course.price} · {course.studentsEnrolled?.length || 0} enrolled · {course.status}</p>
+                      <p className="text-richblack-400 text-xs">₹{course.price} · {course.studentsEnrolled?.length || 0} students · {course.status}</p>
                     </div>
                     {isStudent && (
                       <button onClick={() => handleRemoveCourse(course._id)}
