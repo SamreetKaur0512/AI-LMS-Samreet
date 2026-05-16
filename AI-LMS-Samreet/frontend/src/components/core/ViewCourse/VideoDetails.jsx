@@ -45,7 +45,6 @@ const VideoDetails = () => {
         setVideoEnded(false)
       }
     })()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseSectionData, courseEntireData, location.pathname])
 
   // check if the lecture is the first video of the course

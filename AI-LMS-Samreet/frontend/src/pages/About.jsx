@@ -8,6 +8,7 @@ import { useSelector } from "react-redux"
 import ContactFormSection from "../components/core/AboutPage/ContactFormSection"
 import LearningGrid from "../components/core/AboutPage/LearningGrid"
 import Quote from "../components/core/AboutPage/Quote"
+import StatsComponenet from "../components/core/AboutPage/Stats"
 import CTAButton from "../components/core/HomePage/Button"
 import HighlightText from "../components/core/HomePage/HighlightText"
 import ReviewSlider from "../components/common/ReviewSlider"
@@ -22,6 +23,7 @@ const About = () => {
   const isInstructor = user?.accountType === "Instructor"
   const isAdmin = user?.accountType === "Admin"
   const showExploreButton = !user || user?.accountType === "Student" || (isAdmin && isPreview)
+  const previewQuery = isPreview ? "?preview=true" : ""
 
   const handleMessageSent = () => {
     setIsSent(true);

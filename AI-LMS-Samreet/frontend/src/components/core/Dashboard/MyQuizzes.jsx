@@ -33,7 +33,6 @@ const MyQuizzes = () => {
     setLoading(false)
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchQuizzes() }, [token])
 
   // Open modal and load enrolled courses

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import {
@@ -294,39 +294,33 @@ export default function AdminDashboard() {
   const [selectedUserId, setSelectedUserId] = useState(null)
   const [seeded, setSeeded] = useState(false)
 
-  // Use a ref for headers to avoid stale closure issues without triggering re-renders
-  const headersRef = useRef({ Authorization: `Bearer ${token}` })
-  useEffect(() => {
-    headersRef.current = { Authorization: `Bearer ${token}` }
-  }, [token])
-
   const fetchOverview = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await apiConnector("GET", ADMIN_ENDPOINTS.OVERVIEW, null, headersRef.current)
+      const res = await apiConnector("GET", ADMIN_ENDPOINTS.OVERVIEW, null, { Authorization: `Bearer ${token}` })
       if (res.data.success) setOverview(res.data.data)
     } catch (e) { console.log(e) }
     setLoading(false)
-  }, [])
+  }, [token])
 
   const fetchUsers = useCallback(async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams({ role: roleFilter, search, page: userPage, limit: 15 })
-      const res = await apiConnector("GET", `${ADMIN_ENDPOINTS.GET_USERS}?${params}`, null, headersRef.current)
+      const res = await apiConnector("GET", `${ADMIN_ENDPOINTS.GET_USERS}?${params}`, null, { Authorization: `Bearer ${token}` })
       if (res.data.success) { setUsers(res.data.data); setUserTotal(res.data.total); setUserPages(res.data.pages) }
     } catch (e) { console.log(e) }
     setLoading(false)
-  }, [roleFilter, search, userPage])
+  }, [token, roleFilter, search, userPage])
 
   const fetchAI = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await apiConnector("GET", ADMIN_ENDPOINTS.AI_ANALYTICS, null, headersRef.current)
+      const res = await apiConnector("GET", ADMIN_ENDPOINTS.AI_ANALYTICS, null, { Authorization: `Bearer ${token}` })
       if (res.data.success) setAiData(res.data.data)
     } catch (e) { console.log(e) }
     setLoading(false)
-  }, [])
+  }, [token])
 
   useEffect(() => {
     if (tab === "overview") fetchOverview()
@@ -334,12 +328,14 @@ export default function AdminDashboard() {
     else if (tab === "ai") fetchAI()
   }, [tab, fetchOverview, fetchUsers, fetchAI])
 
-  useEffect(() => { if (tab === "users") fetchUsers() }, [roleFilter, search, userPage, tab, fetchUsers])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (tab === "users") fetchUsers() }, [roleFilter, search, userPage])
 
   // Redirect non-admins
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (user && user.accountType !== "Admin") navigate("/dashboard/my-profile")
-  }, [user, navigate])
+  }, [user])
 
   const handleSeedAdmin = async () => {
     try {

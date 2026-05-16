@@ -98,7 +98,7 @@ function CourseDetails() {
   }
 
   const {
-    courseName,
+      courseName,
     courseDescription,
     thumbnail,
     price,
