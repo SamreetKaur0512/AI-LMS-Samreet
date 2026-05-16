@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { apiConnector } from '../services/apiconnector'
 import { contactUsEndpoints } from '../services/apis'
@@ -9,7 +9,7 @@ const AdminInquiries = () => {
   const [inquiries, setInquiries] = useState([])
   const [loading, setLoading] = useState(false)
 
-  const fetchInquiries = async () => {
+  const fetchInquiries = useCallback(async () => {
     setLoading(true)
     try {
       const response = await apiConnector('GET', contactUsEndpoints.GET_ALL_CONTACTS_API, null, {
@@ -21,7 +21,7 @@ const AdminInquiries = () => {
       toast.error('Failed to fetch inquiries')
     }
     setLoading(false)
-  }
+  }, [token])
 
   const markAsResolved = async (inquiryId) => {
     try {
@@ -30,18 +30,17 @@ const AdminInquiries = () => {
         { Authorization: `Bearer ${token}` }
       )
       toast.success('Inquiry marked as resolved')
-      fetchInquiries() // Refresh the list
+      fetchInquiries()
     } catch (error) {
       console.error('Error updating inquiry:', error)
       toast.error('Failed to update inquiry')
     }
   }
 
- // eslint-disable-next-line react-hooks/exhaustive-deps
-// eslint-disable-next-line react-hooks/exhaustive-deps
-useEffect(() => {
-  fetchInquiries()
-}, [])
+  useEffect(() => {
+    fetchInquiries()
+  }, [fetchInquiries])
+
   return (
     <div className="min-h-screen bg-richblack-900 text-white p-8">
       <div className="max-w-7xl mx-auto">

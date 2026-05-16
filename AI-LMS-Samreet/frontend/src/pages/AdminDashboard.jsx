@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react"
+import React, { useEffect, useState, useCallback, useRef } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import {
@@ -8,11 +8,11 @@ import {
 import { apiConnector } from "../services/apiconnector"
 import { ADMIN_ENDPOINTS } from "../services/apis"
 import {
-  FaUsers, FaChartLine, FaRobot, FaCog, FaUserShield,
+  FaUsers, FaChartLine, FaRobot, FaUserShield,
   FaBookOpen, FaRupeeSign, FaBan, FaTrash, FaEdit, FaSearch,
   FaCheckCircle, FaTimesCircle, FaEye, FaTimes, FaSave,
   FaSignOutAlt, FaUserGraduate, FaChalkboardTeacher,
-  FaArrowLeft, FaBrain, FaImage, FaFileAlt, FaMinusCircle,
+  FaBrain, FaImage, FaFileAlt, FaMinusCircle,
   FaCalendarAlt,
 } from "react-icons/fa"
 import { logout } from "../services/operations/authAPI"
@@ -105,7 +105,6 @@ const UserModal = ({ userId, token, onClose, onRefresh }) => {
 
   if (!user) return null
   const isStudent = user.accountType === "Student"
-  const isInstructor = user.accountType === "Instructor"
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4">
@@ -295,35 +294,39 @@ export default function AdminDashboard() {
   const [selectedUserId, setSelectedUserId] = useState(null)
   const [seeded, setSeeded] = useState(false)
 
-  const headers = { Authorization: `Bearer ${token}` }
+  // Use a ref for headers to avoid stale closure issues without triggering re-renders
+  const headersRef = useRef({ Authorization: `Bearer ${token}` })
+  useEffect(() => {
+    headersRef.current = { Authorization: `Bearer ${token}` }
+  }, [token])
 
   const fetchOverview = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await apiConnector("GET", ADMIN_ENDPOINTS.OVERVIEW, null, headers)
+      const res = await apiConnector("GET", ADMIN_ENDPOINTS.OVERVIEW, null, headersRef.current)
       if (res.data.success) setOverview(res.data.data)
     } catch (e) { console.log(e) }
     setLoading(false)
-  }, [token])
+  }, [])
 
   const fetchUsers = useCallback(async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams({ role: roleFilter, search, page: userPage, limit: 15 })
-      const res = await apiConnector("GET", `${ADMIN_ENDPOINTS.GET_USERS}?${params}`, null, headers)
+      const res = await apiConnector("GET", `${ADMIN_ENDPOINTS.GET_USERS}?${params}`, null, headersRef.current)
       if (res.data.success) { setUsers(res.data.data); setUserTotal(res.data.total); setUserPages(res.data.pages) }
     } catch (e) { console.log(e) }
     setLoading(false)
-  }, [token, roleFilter, search, userPage])
+  }, [roleFilter, search, userPage])
 
   const fetchAI = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await apiConnector("GET", ADMIN_ENDPOINTS.AI_ANALYTICS, null, headers)
+      const res = await apiConnector("GET", ADMIN_ENDPOINTS.AI_ANALYTICS, null, headersRef.current)
       if (res.data.success) setAiData(res.data.data)
     } catch (e) { console.log(e) }
     setLoading(false)
-  }, [token])
+  }, [])
 
   useEffect(() => {
     if (tab === "overview") fetchOverview()
@@ -331,12 +334,12 @@ export default function AdminDashboard() {
     else if (tab === "ai") fetchAI()
   }, [tab, fetchOverview, fetchUsers, fetchAI])
 
-  useEffect(() => { if (tab === "users") fetchUsers() }, [roleFilter, search, userPage])
+  useEffect(() => { if (tab === "users") fetchUsers() }, [roleFilter, search, userPage, tab, fetchUsers])
 
   // Redirect non-admins
   useEffect(() => {
     if (user && user.accountType !== "Admin") navigate("/dashboard/my-profile")
-  }, [user])
+  }, [user, navigate])
 
   const handleSeedAdmin = async () => {
     try {
