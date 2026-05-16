@@ -27,23 +27,23 @@ function Home() {
     return <Navigate to="/admin-home" replace />
   }
   return (
-    <div className='pt-10'>
+    <div className='pt-8 sm:pt-10'>
       {/* Section 1 */}
       <div className="relative mx-auto flex w-11/12 max-w-maxContent flex-col items-center justify-between gap-6 text-white">
         
         {/* Heading */}
-        <div className="text-center text-4xl font-semibold">
+        <div className="max-w-4xl text-center text-3xl font-semibold leading-tight sm:text-4xl">
           Empower Your Future with
           <HighlightText text={"Coding Skills"} />
         </div>
 
         {/* Sub Heading */}
-        <div className="mt-3 w-[90%] text-center text-lg font-bold text-richblack-300">
+        <div className="mt-3 w-full max-w-4xl text-center text-base font-bold leading-7 text-richblack-300 sm:text-lg">
           Whether you're a student eager to learn or an instructor ready to teach, our AI-powered online platform empowers you to learn and teach at your own pace, from anywhere in the world. Access a wealth of resources, including hands-on projects, quizzes, and personalized feedback.
         </div>
 
         {/* CTA Buttons */}
-        <div className="mt-8 flex flex-row gap-7">
+        <div className="mt-6 flex w-full flex-col justify-center gap-4 min-[420px]:flex-row sm:mt-8 sm:gap-7">
           <CTAButton active={true} linkto={"/about"}>
             Learn More
           </CTAButton>
@@ -53,9 +53,9 @@ function Home() {
         </div>
 
         {/* Video */}
-        <div className="mx-3 my-7 shadow-[10px_-5px_50px_-5px] shadow-blue-200">
+        <div className="mx-0 my-6 overflow-hidden rounded-md shadow-[0_0_32px_-10px] shadow-blue-200 sm:mx-3 sm:my-7 sm:shadow-[10px_-5px_50px_-5px]">
           <video
-            className="shadow-[20px_20px_rgba(255,255,255)]"
+            className="aspect-video w-full object-cover sm:shadow-[20px_20px_rgba(255,255,255)]"
             muted
             loop
             autoPlay
@@ -68,7 +68,7 @@ function Home() {
         <CodeBlocks
           position={"lg:flex-row"}
           heading={
-            <div className="text-4xl font-semibold">
+            <div className="text-3xl font-semibold leading-tight sm:text-4xl">
               Unlock your
               <HighlightText text={"coding potential"} /> with our online
               courses.
@@ -97,7 +97,7 @@ function Home() {
           <CodeBlocks
             position={"lg:flex-row-reverse"}
             heading={
-              <div className="w-[100%] text-4xl font-semibold lg:w-[50%]">
+              <div className="w-[100%] text-3xl font-semibold leading-tight sm:text-4xl lg:w-[50%]">
                 Start
                 <HighlightText text={"coding in seconds"} />
               </div>
@@ -132,7 +132,7 @@ function Home() {
           </div>
         )}
 
-        <h1 className="text-center text-4xl font-semibold mt-8">
+        <h1 className="mt-8 text-center text-3xl font-semibold sm:text-4xl">
           Reviews from other learners
         </h1>
         <ReviewSlider />

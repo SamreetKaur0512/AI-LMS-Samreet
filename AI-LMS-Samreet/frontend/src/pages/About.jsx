@@ -34,18 +34,18 @@ const About = () => {
       {/* Section 1: Hero */}
       <section className="bg-richblack-700">
         <div className="relative mx-auto flex w-11/12 max-w-maxContent flex-col justify-between gap-10 text-center text-white">
-          <header className="mx-auto py-20 text-4xl font-semibold lg:w-[70%]">
+          <header className="mx-auto py-14 text-3xl font-semibold leading-tight sm:py-20 sm:text-4xl lg:w-[70%]">
             Revolutionizing Education with
             <HighlightText text={"AI-Powered Learning"} />
             <p className="mx-auto mt-3 text-center text-base font-medium text-richblack-300 lg:w-[95%]">
               EduAI LMS is at the forefront of AI-driven personalized education. We use advanced AI, natural language processing, and predictive analytics to deliver smarter, more adaptive learning experiences for every student.
             </p>
           </header>
-          <div className="sm:h-[70px] lg:h-[150px]"></div>
-          <div className="absolute bottom-0 left-[50%] grid w-[100%] translate-x-[-50%] translate-y-[30%] grid-cols-3 gap-3 lg:gap-5">
-            <img src={BannerImage1} alt="Banner 1" />
-            <img src={BannerImage2} alt="Banner 2" />
-            <img src={BannerImage3} alt="Banner 3" />
+          <div className="h-[45px] sm:h-[70px] lg:h-[150px]"></div>
+          <div className="absolute bottom-0 left-[50%] grid w-full translate-x-[-50%] translate-y-[30%] grid-cols-3 gap-2 lg:gap-5">
+            <img src={BannerImage1} alt="Banner 1" className="aspect-[4/3] w-full object-cover" />
+            <img src={BannerImage2} alt="Banner 2" className="aspect-[4/3] w-full object-cover" />
+            <img src={BannerImage3} alt="Banner 3" className="aspect-[4/3] w-full object-cover" />
           </div>
         </div>
       </section>
@@ -64,7 +64,7 @@ const About = () => {
           {/* Founding Story */}
           <div className="flex flex-col items-center gap-10 lg:flex-row justify-between">
             <div className="mt-16 mb-8 flex lg:w-[50%] flex-col gap-6">
-              <h1 className="bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#FCB045] bg-clip-text text-4xl font-semibold text-transparent lg:w-[70%]">
+              <h1 className="bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#FCB045] bg-clip-text text-3xl font-semibold text-transparent sm:text-4xl lg:w-[70%]">
                 Our Founding Story
               </h1>
               <p className="text-base font-medium text-richblack-300 lg:w-[95%]">
@@ -89,7 +89,7 @@ const About = () => {
           {/* Vision and Mission */}
           <div className="flex flex-col items-center lg:gap-6 lg:flex-row justify-between mb-8">
             <div className="mt-6 flex lg:w-[45%] flex-col gap-6">
-              <h1 className="bg-gradient-to-b from-[#FF512F] to-[#F09819] bg-clip-text text-4xl font-semibold text-transparent">
+              <h1 className="bg-gradient-to-b from-[#FF512F] to-[#F09819] bg-clip-text text-3xl font-semibold text-transparent sm:text-4xl">
                 Our Vision
               </h1>
               <p className="text-base font-medium text-richblack-300 lg:w-[95%]">
@@ -100,7 +100,7 @@ const About = () => {
               </p>
             </div>
             <div className="mt-6 flex lg:w-[45%] flex-col gap-6">
-              <h1 className="bg-gradient-to-b from-[#1FA2FF] via-[#12D8FA] to-[#A6FFCB] text-transparent bg-clip-text text-4xl font-semibold">
+              <h1 className="bg-gradient-to-b from-[#1FA2FF] via-[#12D8FA] to-[#A6FFCB] bg-clip-text text-3xl font-semibold text-transparent sm:text-4xl">
                 Our Mission
               </h1>
               <p className="text-base font-medium text-richblack-300 lg:w-[95%]">
@@ -119,7 +119,7 @@ const About = () => {
         <section className="bg-richblack-800 rounded-2xl my-16 mx-auto w-11/12 max-w-maxContent">
           <div className="px-8 py-12 md:px-16 md:py-16">
             <div className="flex flex-col items-center text-center gap-6">
-              <h1 className="text-4xl font-semibold text-white">
+              <h1 className="text-3xl font-semibold text-white sm:text-4xl">
                 Welcome back, <HighlightText text={"Instructor"} />
               </h1>
               <p className="text-lg text-richblack-300 max-w-3xl">
@@ -139,8 +139,8 @@ const About = () => {
       <section className="mx-auto mt-20 flex w-11/12 max-w-maxContent flex-col justify-between gap-10 text-white">
         <LearningGrid showExploreButton={showExploreButton} previewQuery={isPreview ? "?preview=true" : ""} />
 
-        <div className="rounded-2xl border border-richblack-700 bg-richblack-800 px-8 py-12 shadow-[0_0_30px_rgba(0,0,0,0.3)]">
-          <h1 className="text-center text-4xl font-semibold text-white">
+        <div className="rounded-2xl border border-richblack-700 bg-richblack-800 px-4 py-8 shadow-[0_0_30px_rgba(0,0,0,0.3)] sm:px-8 sm:py-12">
+          <h1 className="text-center text-3xl font-semibold text-white sm:text-4xl">
             Get in <HighlightText text={"Touch"} />
           </h1>
           
@@ -166,7 +166,7 @@ const About = () => {
       {user?.accountType !== "Instructor" && (
         <div className="relative mx-auto my-16 flex w-11/12 max-w-maxContent flex-col items-center justify-between gap-8 text-white">
           <div className="w-full rounded-2xl border border-richblack-700 bg-richblack-800 px-8 py-12">
-            <h1 className="text-center text-4xl font-semibold text-white mb-8">
+            <h1 className="mb-8 text-center text-3xl font-semibold text-white sm:text-4xl">
               Reviews from <HighlightText text={"Other Learners"} />
             </h1>
             <ReviewSlider />
@@ -183,7 +183,7 @@ const About = () => {
           <p className="text-richblack-300 text-sm">
             This AI-Based Learning Management System was designed and developed as a B.Tech final year project.
           </p>
-          <div className="mt-4 inline-block mx-auto bg-richblack-800 rounded-2xl px-10 py-7 border border-richblack-600 shadow-[0_0_20px_rgba(250,204,21,0.08)]">
+          <div className="mx-auto mt-4 inline-block rounded-2xl border border-richblack-600 bg-richblack-800 px-5 py-7 shadow-[0_0_20px_rgba(250,204,21,0.08)] sm:px-10">
             <p className="text-2xl font-bold text-yellow-400">Samreet Kaur</p>
             <p className="text-richblack-300 text-sm">B.Tech CSE | Batch 2022–2026</p>
             <p className="text-richblack-300 text-sm">Amritsar Group of Colleges</p>

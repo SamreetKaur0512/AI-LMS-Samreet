@@ -91,7 +91,7 @@ const AIChat = () => {
       {/* Floating Chat Button */}
       <button
         onClick={() => dispatch(toggleChat())}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-yellow-400 text-richblack-900 shadow-lg hover:bg-yellow-300 transition-all duration-200 hover:scale-110"
+        className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400 text-richblack-900 shadow-lg transition-all duration-200 hover:scale-110 hover:bg-yellow-300 sm:bottom-6 sm:right-6 sm:h-14 sm:w-14"
         title="AI Tutor"
       >
         {isOpen ? (
@@ -103,7 +103,7 @@ const AIChat = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 flex h-[500px] w-[350px] flex-col rounded-2xl bg-richblack-800 shadow-2xl border border-richblack-600 overflow-hidden">
+        <div className="fixed inset-x-3 bottom-20 z-50 flex h-[min(520px,calc(100vh-6rem))] flex-col overflow-hidden rounded-2xl border border-richblack-600 bg-richblack-800 shadow-2xl sm:inset-x-auto sm:bottom-24 sm:right-6 sm:h-[500px] sm:w-[350px]">
           
           {/* Header */}
           <div className="flex items-center gap-3 bg-richblack-700 px-4 py-3 border-b border-richblack-600">

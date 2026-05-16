@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
-import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai"
+import { AiOutlineClose, AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai"
 import { BsChevronDown } from "react-icons/bs"
-import { useSelector, useDispatch } from "react-redux"
-import { Link, matchPath, useLocation, useNavigate, useSearchParams } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { Link, matchPath, useLocation, useSearchParams } from "react-router-dom"
 import { NavbarLinks } from "../../data/navbar-links"
 import { apiConnector } from "../../services/apiconnector"
 import { categories, catalogData } from "../../services/apis"
@@ -18,6 +18,7 @@ function Navbar() {
   const [subLinks, setSubLinks] = useState([])
   const [popularCourses, setPopularCourses] = useState([])
   const [loading, setLoading] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const isPreview = searchParams.get('preview') === 'true'
   const isAdmin = user?.accountType === ACCOUNT_TYPE.ADMIN && !isPreview
   const isInstructor = user?.accountType === ACCOUNT_TYPE.INSTRUCTOR
@@ -38,6 +39,10 @@ function Navbar() {
     })()
   }, [])
 
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [location.pathname, location.search])
+
   const matchRoute = (route) => matchPath({ path: route }, location.pathname)
 
   const appendPreviewQuery = (path) => {
@@ -48,15 +53,15 @@ function Navbar() {
   const showPopularCourses = !isPreview && user?.accountType !== ACCOUNT_TYPE.STUDENT
 
   return (
-    <div className={`flex h-14 items-center justify-center border-b-[1px] border-b-richblack-700 ${location.pathname !== "/" ? "bg-richblack-800" : ""} transition-all duration-200`}>
-      <div className="flex w-11/12 max-w-maxContent items-center justify-between">
+    <div className={`sticky top-0 z-50 flex min-h-14 items-center justify-center border-b-[1px] border-b-richblack-700 ${location.pathname !== "/" ? "bg-richblack-800" : "bg-richblack-900/95"} transition-all duration-200`}>
+      <div className="relative flex w-11/12 max-w-maxContent items-center justify-between py-2">
 
         {/* Logo */}
-        <Link to={appendPreviewQuery("/")} className="flex flex-col items-start justify-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-25 to-yellow-100 bg-clip-text text-transparent">
+        <Link to={appendPreviewQuery("/")} className="flex min-w-0 flex-col items-start justify-center">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-25 to-yellow-100 bg-clip-text text-transparent sm:text-3xl">
             EduAI LMS
           </h1>
-          <p className="text-xs text-richblack-300 italic tracking-widest">
+          <p className="max-w-[190px] truncate text-[10px] italic tracking-widest text-richblack-300 sm:max-w-none sm:text-xs">
             AI-based Learning Management System
           </p>
         </Link>
@@ -241,9 +246,108 @@ function Navbar() {
           {token && <ProfileDropdown />}
         </div>
 
-        <button className="mr-4 md:hidden">
-          <AiOutlineMenu fontSize={24} fill="#AFB2BF" />
+        <button
+          className="grid h-10 w-10 place-items-center rounded-md border border-richblack-700 bg-richblack-800 md:hidden"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={mobileMenuOpen}
+        >
+          {mobileMenuOpen ? (
+            <AiOutlineClose fontSize={22} fill="#AFB2BF" />
+          ) : (
+            <AiOutlineMenu fontSize={24} fill="#AFB2BF" />
+          )}
         </button>
+
+        {mobileMenuOpen && (
+          <div className="absolute left-0 right-0 top-full mt-2 max-h-[calc(100vh-4.5rem)] overflow-y-auto rounded-lg border border-richblack-700 bg-richblack-800 p-4 shadow-2xl md:hidden">
+            <div className="flex flex-col gap-1 text-richblack-25">
+              {isAdmin ? (
+                <>
+                  <Link className="rounded-md px-3 py-3 hover:bg-richblack-700" to="/">Home</Link>
+                  <Link className="rounded-md px-3 py-3 hover:bg-richblack-700" to="/admin?tab=overview">Dashboard</Link>
+                  <Link className="rounded-md px-3 py-3 hover:bg-richblack-700" to="/admin?tab=users">User Management</Link>
+                  <Link className="rounded-md px-3 py-3 hover:bg-richblack-700" to="/admin?tab=ai">AI Analytics</Link>
+                  <Link className="rounded-md px-3 py-3 hover:bg-richblack-700" to={appendPreviewQuery("/contact")}>Contact</Link>
+                </>
+              ) : isInstructor ? (
+                <>
+                  <Link className="rounded-md px-3 py-3 hover:bg-richblack-700" to="/">Home</Link>
+                  <Link className="rounded-md px-3 py-3 hover:bg-richblack-700" to="/dashboard/instructor">Dashboard</Link>
+                  <Link className="rounded-md px-3 py-3 hover:bg-richblack-700" to="/dashboard/my-courses">My Courses</Link>
+                  <Link className="rounded-md px-3 py-3 hover:bg-richblack-700" to={appendPreviewQuery("/about")}>About Us</Link>
+                  <Link className="rounded-md px-3 py-3 hover:bg-richblack-700" to={appendPreviewQuery("/contact")}>Contact Us</Link>
+                </>
+              ) : (
+                <>
+                  {NavbarLinks.filter((link) => link.title !== "Catalog").map((link) => (
+                    <Link
+                      key={link.title}
+                      className="rounded-md px-3 py-3 hover:bg-richblack-700"
+                      to={appendPreviewQuery(link.path)}
+                    >
+                      {link.title}
+                    </Link>
+                  ))}
+                  <div className="mt-2 border-t border-richblack-700 pt-3">
+                    <p className="px-3 pb-2 text-sm font-semibold text-richblack-300">Catalog</p>
+                    {loading ? (
+                      <p className="px-3 py-2 text-sm text-richblack-400">Loading...</p>
+                    ) : subLinks?.filter((s) => s?.courses?.length > 0).length ? (
+                      subLinks
+                        .filter((s) => s?.courses?.length > 0)
+                        .map((subLink, i) => (
+                          <Link
+                            to={appendPreviewQuery(`/catalog/${subLink.name.split(" ").join("-").toLowerCase()}`)}
+                            className="block rounded-md px-3 py-2 text-sm text-richblack-100 hover:bg-richblack-700"
+                            key={i}
+                          >
+                            {subLink.name}
+                          </Link>
+                        ))
+                    ) : (
+                      <p className="px-3 py-2 text-sm text-richblack-400">No Categories Found</p>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="mt-4 flex flex-col gap-3 border-t border-richblack-700 pt-4">
+              {user && !isAdmin && !isPreview && user?.accountType !== ACCOUNT_TYPE.INSTRUCTOR && (
+                <Link to="/dashboard/cart" className="flex items-center justify-between rounded-md border border-richblack-700 px-3 py-3 text-richblack-100">
+                  <span>Cart</span>
+                  <span className="rounded-full bg-richblack-600 px-2 py-0.5 text-xs font-bold text-yellow-100">{totalItems}</span>
+                </Link>
+              )}
+
+              {!token && (
+                <div className="grid grid-cols-2 gap-3">
+                  <Link to="/login" className="rounded-md border border-richblack-700 bg-richblack-900 px-3 py-3 text-center text-richblack-100">
+                    Log in
+                  </Link>
+                  <Link to="/signup" className="rounded-md border border-richblack-700 bg-yellow-50 px-3 py-3 text-center font-semibold text-richblack-900">
+                    Sign up
+                  </Link>
+                </div>
+              )}
+
+              {token && isAdmin && !matchRoute("/admin") && (
+                <Link to="/admin" className="rounded-md bg-yellow-400 px-3 py-3 text-center font-semibold text-richblack-900">
+                  Admin Panel
+                </Link>
+              )}
+
+              {token && isPreview && user?.accountType === ACCOUNT_TYPE.ADMIN && (
+                <Link to="/admin" className="rounded-md bg-yellow-400 px-3 py-3 text-center font-semibold text-richblack-900">
+                  Go back to Admin site
+                </Link>
+              )}
+
+              {token && <div className="self-start"><ProfileDropdown /></div>}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -14,20 +14,20 @@ const CodeBlocks = ({
   codeColor,
 }) => {
   return (
-    <div className={`flex ${position} my-20 justify-between flex-col lg:gap-10 gap-10`}>
+    <div className={`flex ${position} my-12 w-full justify-between flex-col gap-8 lg:my-20 lg:gap-10`}>
 
 
       {/* Section 1  */}
-      <div className="w-[100%] lg:w-[50%] flex flex-col gap-8">
+      <div className="flex w-full flex-col gap-6 lg:w-[50%] lg:gap-8">
         {heading}
 
         {/* Sub Heading */}
-        <div className="text-richblack-300 text-base font-bold w-[85%] -mt-3">
+        <div className="-mt-2 w-full text-base font-bold leading-7 text-richblack-300 lg:w-[85%]">
           {subheading}
         </div>
 
         {/* Button Group */}
-        <div className="flex gap-7 mt-7">
+        <div className="mt-3 flex flex-col gap-4 min-[420px]:flex-row sm:mt-7 sm:gap-7">
           <CTAButton active={ctabtn1.active} linkto={ctabtn1.link}>
             <div className="flex items-center gap-2">
               {ctabtn1.btnText}
@@ -41,7 +41,7 @@ const CodeBlocks = ({
       </div>
 
       {/* Section 2 */}
-      <div className="h-fit code-border flex flex-row py-3 text-[10px] sm:text-sm leading-[18px] sm:leading-6 relative w-[100%] lg:w-[470px]">
+      <div className="code-border relative flex h-fit w-full max-w-full flex-row overflow-hidden py-3 text-[10px] leading-[18px] sm:text-sm sm:leading-6 lg:w-[470px]">
         {backgroundGradient}
         {/* Indexing */}
         <div className="text-center flex flex-col   w-[10%] select-none text-richblack-400 font-inter font-bold ">

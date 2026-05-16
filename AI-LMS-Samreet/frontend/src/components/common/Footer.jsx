@@ -41,11 +41,11 @@ const Footer = () => {
 
   return (
     <div className="bg-richblack-800">
-      <div className="flex lg:flex-row gap-8 items-center justify-between w-11/12 max-w-maxContent text-richblack-400 leading-6 mx-auto relative py-14">
-        <div className="border-b w-[100%] flex flex-col lg:flex-row pb-5 border-richblack-700">
+      <div className="relative mx-auto flex w-11/12 max-w-maxContent items-center justify-between gap-8 py-10 text-richblack-400 leading-6 lg:flex-row lg:py-14">
+        <div className="flex w-full flex-col border-b border-richblack-700 pb-5 lg:flex-row">
 
           {/* Left: Branding + Company + Social */}
-          <div className="lg:w-[28%] flex flex-col gap-4 lg:border-r lg:border-richblack-700 pr-8 mb-7">
+          <div className="mb-7 flex flex-col gap-4 pr-0 lg:w-[28%] lg:border-r lg:border-richblack-700 lg:pr-8">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-400 text-richblack-900 font-bold text-sm">E</div>
               <span className="text-richblack-5 font-bold text-lg">EduAI LMS</span>
@@ -72,7 +72,7 @@ const Footer = () => {
           </div>
 
           {/* Right: Conditional based on user role */}
-          <div className="lg:w-[72%] flex flex-wrap flex-row pl-3 lg:pl-10 gap-y-6">
+          <div className="grid w-full grid-cols-1 gap-y-6 pl-0 sm:grid-cols-2 lg:w-[72%] lg:flex lg:flex-row lg:flex-wrap lg:pl-10">
 
             {isAdmin ? (
               <>
@@ -227,9 +227,9 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="flex flex-row items-center justify-between w-11/12 max-w-maxContent text-richblack-400 mx-auto pb-14 text-sm">
+      <div className="mx-auto flex w-11/12 max-w-maxContent flex-row items-center justify-between pb-10 text-sm text-richblack-400 lg:pb-14">
         <div className="flex justify-between lg:items-start items-center flex-col lg:flex-row gap-3 w-full">
-          <div className="flex flex-row">
+          <div className="flex flex-wrap justify-center">
             {BottomFooter.map((ele, i) => (
               <div
                 key={i}
