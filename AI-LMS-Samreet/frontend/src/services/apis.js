@@ -87,21 +87,21 @@ export const QUIZ_ENDPOINTS = {
   GET_QUIZ_HISTORY: BASE_URL + "/quiz/history",
 }
 export const TIMETABLE_ENDPOINTS = {
-  GET_DASHBOARD: "http://localhost:4000/api/v1/timetable/dashboard",
-  SAVE_PLAN:     "http://localhost:4000/api/v1/timetable/plan",
-  DELETE_PLAN:   "http://localhost:4000/api/v1/timetable/plan",
+  GET_DASHBOARD: BASE_URL + "/timetable/dashboard",
+  SAVE_PLAN:     BASE_URL + "/timetable/plan",
+  DELETE_PLAN:   BASE_URL + "/timetable/plan",
 }
 
 export const ADMIN_ENDPOINTS = {
-  SEED:                "http://localhost:4000/api/v1/admin/seed",
-  OVERVIEW:            "http://localhost:4000/api/v1/admin/overview",
-  GET_USERS:           "http://localhost:4000/api/v1/admin/users",
-  GET_USER:            (id) => `http://localhost:4000/api/v1/admin/users/${id}`,
-  UPDATE_USER:         (id) => `http://localhost:4000/api/v1/admin/users/${id}`,
-  SUSPEND_USER:        (id) => `http://localhost:4000/api/v1/admin/users/${id}/suspend`,
-  DELETE_USER:         (id) => `http://localhost:4000/api/v1/admin/users/${id}`,
-  DELETE_USER_PHOTO:   (id) => `http://localhost:4000/api/v1/admin/users/${id}/photo`,
-  DELETE_USER_BIO:     (id) => `http://localhost:4000/api/v1/admin/users/${id}/bio`,
-  REMOVE_COURSE:       (id, cid) => `http://localhost:4000/api/v1/admin/users/${id}/courses/${cid}`,
-  AI_ANALYTICS:        "http://localhost:4000/api/v1/admin/ai-analytics",
+  SEED:                BASE_URL + "/admin/seed",
+  OVERVIEW:            BASE_URL + "/admin/overview",
+  GET_USERS:           BASE_URL + "/admin/users",
+  GET_USER:            (id) => `${BASE_URL}/admin/users/${id}`,
+  UPDATE_USER:         (id) => `${BASE_URL}/admin/users/${id}`,
+  SUSPEND_USER:        (id) => `${BASE_URL}/admin/users/${id}/suspend`,
+  DELETE_USER:         (id) => `${BASE_URL}/admin/users/${id}`,
+  DELETE_USER_PHOTO:   (id) => `${BASE_URL}/admin/users/${id}/photo`,
+  DELETE_USER_BIO:     (id) => `${BASE_URL}/admin/users/${id}/bio`,
+  REMOVE_COURSE:       (id, cid) => `${BASE_URL}/admin/users/${id}/courses/${cid}`,
+  AI_ANALYTICS:        BASE_URL + "/admin/ai-analytics",
 }
