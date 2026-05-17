@@ -19,6 +19,7 @@ function Navbar() {
   const [popularCourses, setPopularCourses] = useState([])
   const [loading, setLoading] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [catalogOpen, setCatalogOpen] = useState(false)
   const mobileMenuRef = useRef(null)
 
   const isPreview = searchParams.get("preview") === "true"
@@ -43,6 +44,7 @@ function Navbar() {
   // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false)
+    setCatalogOpen(false)
   }, [location.pathname])
 
   const matchRoute = (route) => matchPath({ path: route }, location.pathname)
@@ -54,32 +56,32 @@ function Navbar() {
 
   const showPopularCourses = !isPreview && user?.accountType !== ACCOUNT_TYPE.STUDENT
 
-  // Build nav links array for reuse in both desktop + mobile
-  const renderNavLinks = (onLinkClick = () => {}) => {
+  // Desktop nav links (hover-based catalog)
+  const renderDesktopNavLinks = () => {
     if (isAdmin) {
       return (
         <>
-          <NavItem to="/" label="Home" matchRoute={matchRoute} onClick={onLinkClick} />
-          <NavItem to="/admin?tab=overview" label="Dashboard" matchRoute={matchRoute} path="/admin" onClick={onLinkClick} />
-          <NavItem to="/admin?tab=users" label="User Management" matchRoute={matchRoute} path="/admin" onClick={onLinkClick} />
-          <NavItem to="/admin?tab=ai" label="AI Analytics" matchRoute={matchRoute} path="/admin" onClick={onLinkClick} />
-          <NavItem to={appendPreviewQuery("/contact")} label="Contact" matchRoute={matchRoute} path="/contact" onClick={onLinkClick} />
+          <NavItem to="/" label="Home" matchRoute={matchRoute} />
+          <NavItem to="/admin?tab=overview" label="Dashboard" matchRoute={matchRoute} path="/admin" />
+          <NavItem to="/admin?tab=users" label="User Management" matchRoute={matchRoute} path="/admin" />
+          <NavItem to="/admin?tab=ai" label="AI Analytics" matchRoute={matchRoute} path="/admin" />
+          <NavItem to={appendPreviewQuery("/contact")} label="Contact" matchRoute={matchRoute} path="/contact" />
         </>
       )
     }
     if (isInstructor) {
       return (
         <>
-          <NavItem to="/" label="Home" matchRoute={matchRoute} onClick={onLinkClick} />
-          <NavItem to="/dashboard/instructor" label="Dashboard" matchRoute={matchRoute} onClick={onLinkClick} />
-          <NavItem to="/dashboard/my-courses" label="My Courses" matchRoute={matchRoute} onClick={onLinkClick} />
-          <NavItem to={appendPreviewQuery("/about")} label="About Us" matchRoute={matchRoute} path="/about" onClick={onLinkClick} />
-          <NavItem to={appendPreviewQuery("/contact")} label="Contact Us" matchRoute={matchRoute} path="/contact" onClick={onLinkClick} />
+          <NavItem to="/" label="Home" matchRoute={matchRoute} />
+          <NavItem to="/dashboard/instructor" label="Dashboard" matchRoute={matchRoute} />
+          <NavItem to="/dashboard/my-courses" label="My Courses" matchRoute={matchRoute} />
+          <NavItem to={appendPreviewQuery("/about")} label="About Us" matchRoute={matchRoute} path="/about" />
+          <NavItem to={appendPreviewQuery("/contact")} label="Contact Us" matchRoute={matchRoute} path="/contact" />
         </>
       )
     }
     return NavbarLinks.map((link, index) => (
-      <li key={index} onClick={onLinkClick} className="px-4 py-2.5 hover:bg-richblack-700 transition-all">
+      <li key={index}>
         {link.title === "Catalog" ? (
           <div className={`group relative flex cursor-pointer items-center gap-1 ${matchRoute("/catalog/:catalogName") ? "text-yellow-25" : "text-richblack-25"}`}>
             <p>{link.title}</p>
@@ -133,6 +135,77 @@ function Navbar() {
     ))
   }
 
+  // Mobile nav links (click-based catalog)
+  const renderMobileNavLinks = (onLinkClick = () => {}) => {
+    if (isAdmin) {
+      return (
+        <>
+          <NavItem to="/" label="Home" matchRoute={matchRoute} onClick={onLinkClick} mobile />
+          <NavItem to="/admin?tab=overview" label="Dashboard" matchRoute={matchRoute} path="/admin" onClick={onLinkClick} mobile />
+          <NavItem to="/admin?tab=users" label="User Management" matchRoute={matchRoute} path="/admin" onClick={onLinkClick} mobile />
+          <NavItem to="/admin?tab=ai" label="AI Analytics" matchRoute={matchRoute} path="/admin" onClick={onLinkClick} mobile />
+          <NavItem to={appendPreviewQuery("/contact")} label="Contact" matchRoute={matchRoute} path="/contact" onClick={onLinkClick} mobile />
+        </>
+      )
+    }
+    if (isInstructor) {
+      return (
+        <>
+          <NavItem to="/" label="Home" matchRoute={matchRoute} onClick={onLinkClick} mobile />
+          <NavItem to="/dashboard/instructor" label="Dashboard" matchRoute={matchRoute} onClick={onLinkClick} mobile />
+          <NavItem to="/dashboard/my-courses" label="My Courses" matchRoute={matchRoute} onClick={onLinkClick} mobile />
+          <NavItem to={appendPreviewQuery("/about")} label="About Us" matchRoute={matchRoute} path="/about" onClick={onLinkClick} mobile />
+          <NavItem to={appendPreviewQuery("/contact")} label="Contact Us" matchRoute={matchRoute} path="/contact" onClick={onLinkClick} mobile />
+        </>
+      )
+    }
+    return NavbarLinks.map((link, index) => (
+      <li key={index}>
+        {link.title === "Catalog" ? (
+          <div className="flex flex-col">
+            {/* Catalog toggle row */}
+            <button
+              className={`flex w-full items-center justify-between px-6 py-3 hover:bg-richblack-700 transition-all ${matchRoute("/catalog/:catalogName") ? "text-yellow-25" : "text-richblack-25"}`}
+              onClick={(e) => { e.stopPropagation(); setCatalogOpen((prev) => !prev) }}
+            >
+              <span>{link.title}</span>
+              <BsChevronDown className={`transition-transform duration-200 ${catalogOpen ? "rotate-180" : ""}`} />
+            </button>
+            {/* Catalog submenu */}
+            {catalogOpen && (
+              <div className="bg-richblack-700 flex flex-col py-1">
+                {loading ? (
+                  <p className="text-center text-sm py-2 text-richblack-25">Loading...</p>
+                ) : subLinks?.length ? (
+                  subLinks.filter((s) => s?.courses?.length > 0).map((subLink, i) => (
+                    <Link
+                      key={i}
+                      to={appendPreviewQuery(`/catalog/${subLink.name.split(" ").join("-").toLowerCase()}`)}
+                      className="py-2.5 pl-10 pr-4 text-sm text-richblack-25 hover:bg-richblack-600 hover:text-yellow-25 transition-all"
+                      onClick={onLinkClick}
+                    >
+                      {subLink.name}
+                    </Link>
+                  ))
+                ) : (
+                  <p className="text-center text-sm py-2 text-richblack-25">No Categories Found</p>
+                )}
+              </div>
+            )}
+          </div>
+        ) : (
+          <Link
+            to={appendPreviewQuery(link?.path)}
+            className="block px-6 py-3 hover:bg-richblack-700 transition-all"
+            onClick={onLinkClick}
+          >
+            <p className={matchRoute(link?.path) ? "text-yellow-25" : "text-richblack-25"}>{link.title}</p>
+          </Link>
+        )}
+      </li>
+    ))
+  }
+
   return (
     <>
       <div
@@ -155,7 +228,7 @@ function Navbar() {
           {/* Desktop Nav Links */}
           <nav className="hidden md:block">
             <ul className="flex gap-x-6 text-richblack-25">
-              {renderNavLinks()}
+              {renderDesktopNavLinks()}
             </ul>
           </nav>
 
@@ -233,7 +306,6 @@ function Navbar() {
                 </Link>
               </div>
             )}
-            {/* Hamburger button — always last, never overlaps profile */}
             <button
               className="flex flex-shrink-0 items-center justify-center rounded-md p-1.5 text-richblack-100 hover:bg-richblack-700 transition-all"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
@@ -258,11 +330,11 @@ function Navbar() {
             ref={mobileMenuRef}
             className="fixed top-14 left-0 right-0 z-40 bg-richblack-800 border-b border-richblack-700 shadow-2xl md:hidden"
           >
-            <nav className="flex flex-col py-3">
-              <ul className="flex flex-col text-richblack-25 text-sm">
-                {renderNavLinks(() => setMobileMenuOpen(false))}
+            <nav className="flex flex-col py-2">
+              {/* ⬇ pl-0 list, no left padding — items use px-6 themselves */}
+              <ul className="flex flex-col text-richblack-25 text-sm list-none m-0 p-0">
+                {renderMobileNavLinks(() => setMobileMenuOpen(false))}
               </ul>
-              {/* Admin panel button in mobile menu */}
               {token && isAdmin && !matchRoute("/admin") && (
                 <div className="px-4 pt-3 border-t border-richblack-700 mt-2">
                   <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>
@@ -280,11 +352,22 @@ function Navbar() {
   )
 }
 
-// Small helper component for nav items
-function NavItem({ to, label, matchRoute, path, onClick }) {
+// Desktop nav item helper
+function NavItem({ to, label, matchRoute, path, onClick, mobile }) {
   const resolvedPath = path || to.split("?")[0]
+  if (mobile) {
+    return (
+      <li onClick={onClick} className="px-6 py-3 hover:bg-richblack-700 transition-all">
+        <Link to={to}>
+          <p className={matchRoute(resolvedPath) ? "text-yellow-25 font-medium" : "text-richblack-25"}>
+            {label}
+          </p>
+        </Link>
+      </li>
+    )
+  }
   return (
-    <li onClick={onClick} className="px-4 py-2.5 hover:bg-richblack-700 transition-all">
+    <li onClick={onClick}>
       <Link to={to}>
         <p className={matchRoute(resolvedPath) ? "text-yellow-25 font-medium" : "text-richblack-25"}>
           {label}

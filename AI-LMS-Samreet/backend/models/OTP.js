@@ -18,31 +18,28 @@ const OTPSchema = new mongoose.Schema({
 	},
 });
 
-// Send OTP email - never crash even if email fails
 async function sendVerificationEmail(email, otp) {
 	try {
+		console.log(`Attempting to send OTP email to: ${email}`);
 		const mailResponse = await mailSender(
 			email,
 			"Verification Email - EduAI LMS",
 			emailTemplate(otp)
 		);
 		if (mailResponse) {
-			console.log("OTP email sent successfully to:", email);
+			console.log("OTP email sent successfully. MessageId:", mailResponse.messageId);
 		} else {
-			console.log("OTP email could not be sent (mail service issue) but OTP saved:", otp);
+			console.error("OTP email failed — mailSender returned null. Check MAIL_USER and MAIL_PASS in .env");
 		}
 	} catch (error) {
-		// Log but never throw - OTP should still save even if email fails
-		console.log("Error sending OTP email (non-fatal):", error.message);
+		console.error("Error sending OTP email:", error.message);
 	}
 }
 
-// Post-save hook - email failure will NOT block OTP creation
+// Pre-save hook — awaits email so errors are visible in logs
 OTPSchema.pre("save", async function (next) {
-	console.log("New document saved to database");
 	if (this.isNew) {
-		// Don't await - fire and forget so it never blocks next()
-		sendVerificationEmail(this.email, this.otp);
+		await sendVerificationEmail(this.email, this.otp);
 	}
 	next();
 });
