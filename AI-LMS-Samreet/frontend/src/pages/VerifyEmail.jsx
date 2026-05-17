@@ -9,14 +9,17 @@ import { useNavigate } from "react-router-dom";
 
 function VerifyEmail() {
   const [otp, setOtp] = useState("");
-  const { signupData, loading } = useSelector((state) => state.auth);
+  const { signupData, loading, otpFromServer } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Only allow access of this route when user has filled the signup form
     if (!signupData) {
       navigate("/signup");
+    }
+    // Auto-fill OTP from server response if email not received
+    if (otpFromServer) {
+      setOtp(otpFromServer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

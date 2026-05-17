@@ -1,6 +1,6 @@
 import { toast } from "react-hot-toast"
 
-import { setLoading, setToken } from "../../slices/authSlice"
+import { setLoading, setToken, setOtpFromServer } from "../../slices/authSlice"
 import { setCartUser } from "../../slices/cartSlice"
 import { setUser } from "../../slices/profileSlice"
 import { apiConnector } from "../apiconnector"
@@ -32,6 +32,10 @@ export function sendOtp(email, navigate) {
       }
 
       toast.success("OTP Sent Successfully")
+      // Store otp from response so VerifyEmail can auto-fill it
+      if (response.data.otp) {
+        dispatch({ type: "auth/setOtpFromServer", payload: response.data.otp })
+      }
       navigate("/verify-email")
     } catch (error) {
       console.log("SENDOTP API ERROR............", error)
