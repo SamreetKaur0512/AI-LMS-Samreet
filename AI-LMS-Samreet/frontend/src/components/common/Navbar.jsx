@@ -31,9 +31,15 @@ function Navbar() {
       setLoading(true)
       try {
         const res = await apiConnector("GET", categories.CATEGORIES_API)
-        setSubLinks(res.data.data)
-        const popularRes = await apiConnector("GET", catalogData.POPULAR_COURSES_API)
-        setPopularCourses(popularRes.data.data.slice(0, 4))
+        setSubLinks(res?.data?.data || [])
+        try {
+          const popularRes = await apiConnector("GET", catalogData.POPULAR_COURSES_API)
+          // Backend returns { data: [...] } not { data: { data: [...] } }
+          const popularData = popularRes?.data?.data || popularRes?.data || []
+          setPopularCourses(Array.isArray(popularData) ? popularData.slice(0, 4) : [])
+        } catch {
+          setPopularCourses([])
+        }
       } catch (error) {
         console.log("Could not fetch Categories or Popular Courses.", error)
       }

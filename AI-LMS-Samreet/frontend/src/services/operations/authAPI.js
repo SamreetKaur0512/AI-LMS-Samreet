@@ -32,11 +32,8 @@ export function sendOtp(email, navigate) {
       }
 
       toast.success("OTP Sent Successfully")
-      // Store otp from response so VerifyEmail can auto-fill it
-      if (response.data.otp) {
-        dispatch({ type: "auth/setOtpFromServer", payload: response.data.otp })
-      }
-      navigate("/verify-email")
+      // Only navigate if navigate was provided (not needed for resend)
+      if (navigate) navigate("/verify-email")
     } catch (error) {
       console.log("SENDOTP API ERROR............", error)
       toast.error("Could Not Send OTP")
