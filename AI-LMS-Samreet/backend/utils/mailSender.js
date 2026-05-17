@@ -1,6 +1,5 @@
 const nodemailer = require("nodemailer")
 
-// Create transporter ONCE at startup — reused for all emails (connection pooling)
 let transporter = null
 
 function getTransporter() {
@@ -16,13 +15,16 @@ function getTransporter() {
 
   transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    pool: true,          // keep connection alive and reuse it
+    port: 587,
+    secure: false,        // port 587 uses STARTTLS, not SSL
+    pool: true,
     maxConnections: 3,
     auth: {
       user: user,
       pass: pass.replace(/\s/g, ""),
+    },
+    tls: {
+      rejectUnauthorized: false,
     },
   })
 
@@ -48,7 +50,6 @@ const mailSender = async (email, title, body) => {
     console.error("mailSender ERROR:", error.message)
     if (error.message.includes("Invalid login") || error.message.includes("535")) {
       console.error(">> Gmail auth failed — regenerate App Password at https://myaccount.google.com/apppasswords")
-      // Reset transporter so next call retries with fresh connection
       transporter = null
     }
     return null
