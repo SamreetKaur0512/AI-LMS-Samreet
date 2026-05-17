@@ -18,6 +18,7 @@ import CourseDetailsCard from "../components/core/Course/CourseDetailsCard"
 import { formatDate } from "../services/formatDate"
 import { fetchCourseDetails } from "../services/operations/courseDetailsAPI"
 import { buyCourse } from "../services/operations/studentFeaturesAPI"
+import { addToCart } from "../slices/cartSlice"
 import GetAvgRating from "../utils/avgRating"
 import Error from "./Error"
 
@@ -244,10 +245,42 @@ function CourseDetails() {
               <p className="space-x-3 pb-4 text-3xl font-semibold text-richblack-5">
                 {isFreeCourse ? "Free" : `Rs. ${price}`}
               </p>
-              <button className="yellowButton" onClick={handleBuyCourse}>
-                {isFreeCourse ? "Start Learning" : "Buy Now"}
-              </button>
-              {!isFreeCourse && <button className="blackButton">Add to Cart</button>}
+              {isUserEnrolled ? (
+                <button
+                  className="yellowButton"
+                  onClick={() => navigate(`/view-course/${courseId}/section/${response?.data?.courseDetails?.courseContent?.[0]?._id}/sub-section/${response?.data?.courseDetails?.courseContent?.[0]?.subSection?.[0]?._id}`)}
+                >
+                  Go To Course
+                </button>
+              ) : (
+                <>
+                  <button className="yellowButton" onClick={handleBuyCourse}>
+                    {isFreeCourse ? "Start Learning" : "Buy Now"}
+                  </button>
+                  {!isFreeCourse && (
+                    <button
+                      className="blackButton"
+                      onClick={() => {
+                        if (!token) {
+                          setConfirmationModal({
+                            text1: "You are not logged in!",
+                            text2: "Please login to add to cart",
+                            btn1Text: "Login",
+                            btn2Text: "Cancel",
+                            btn1Handler: () => navigate("/login"),
+                            btn2Handler: () => setConfirmationModal(null),
+                          })
+                          return
+                        }
+                        dispatch(addToCart(response?.data?.courseDetails))
+                        toast.success("Course added to cart")
+                      }}
+                    >
+                      Add to Cart
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           </div>
           {/* Courses Card */}

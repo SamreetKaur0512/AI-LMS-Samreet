@@ -84,7 +84,7 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
                             `/view-course/${courseId}/section/${firstSection._id}/sub-section/${firstSubSection._id}`
                           )
                       : user && course?.studentsEnrolled.includes(user?._id)
-                      ? () => navigate("/dashboard/enrolled-courses")
+                      ? () => navigate(`/view-course/${courseId}/section/${firstSection?._id}/sub-section/${firstSubSection?._id}`)
                       : handleBuyCourse
                   }
                 >

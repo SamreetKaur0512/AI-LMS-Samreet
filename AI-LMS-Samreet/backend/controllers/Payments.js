@@ -187,7 +187,8 @@ const enrollStudents = async (courses, userId) => {
         `Successfully Enrolled into ${enrolledCourse.courseName}`,
         courseEnrollmentEmail(
           enrolledCourse.courseName,
-          `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
+          `${enrolledStudent.firstName} ${enrolledStudent.lastName}`,
+          courseId
         )
       ).catch(err => console.log("Enrollment email error:", err))
 

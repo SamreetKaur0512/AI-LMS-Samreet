@@ -1,4 +1,4 @@
-exports.courseEnrollmentEmail = (courseName, name) => {
+exports.courseEnrollmentEmail = (courseName, name, courseId) => {
     return `<!DOCTYPE html>
     <html>
     
@@ -74,9 +74,7 @@ exports.courseEnrollmentEmail = (courseName, name) => {
                 <p>Dear ${name},</p>
                 <p>You have successfully registered for the course <span class="highlight">"${courseName}"</span>. We
                     are excited to have you as a participant!</p>
-                <p>Please log in to your learning dashboard to access the course materials and start your learning journey.
-                </p>
-                <a class="cta" href="https://ai-lms-samreet.vercel.app/dashboard">Go to Dashboard</a>
+
             </div>
             <div class="support">If you have any questions or need assistance, please feel free to reach out to us at <a
                     href="mailto:samreet205@gmail.com">samreetk@agc.edu.in</a>. We are here to help!</div>
