@@ -70,15 +70,18 @@ exports.resetPassword = async (req, res) => {
     }
 
     const encryptedPassword = await bcrypt.hash(password, 10);
-    console.log("Resetting password for user:", userDetails.email);
+    console.log("=== RESET PASSWORD V3 === user:", userDetails.email, "| hash preview:", encryptedPassword.substring(0, 20));
 
-    // Directly set on the document and save — most reliable approach
+    // Directly set on the document and save
     userDetails.password = encryptedPassword;
     userDetails.token = undefined;
     userDetails.resetPasswordExpires = undefined;
     await userDetails.save();
 
-    console.log("Password reset successfully for:", userDetails.email);
+    // Verify the save actually worked by reading back from DB
+    const verify = await User.findById(userDetails._id).select("password email");
+    const matches = await bcrypt.compare(password, verify.password);
+    console.log("=== VERIFY SAVE === email:", verify.email, "| new password matches:", matches);
 
     return res.json({
       success: true,
