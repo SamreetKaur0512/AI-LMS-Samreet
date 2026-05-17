@@ -2,44 +2,48 @@ const nodemailer = require("nodemailer")
 
 const mailSender = async (email, title, body) => {
   try {
-    console.log("mailSender: MAIL_USER =", process.env.MAIL_USER ? process.env.MAIL_USER : "NOT SET")
-    console.log("mailSender: MAIL_PASS =", process.env.MAIL_PASS ? "SET (length " + process.env.MAIL_PASS.length + ")" : "NOT SET")
+    const user = process.env.MAIL_USER
+    const pass = process.env.MAIL_PASS
 
-    if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
-      console.error("mailSender: MAIL_USER or MAIL_PASS is missing from .env file!")
+    if (!user || !pass) {
+      console.error("mailSender: MAIL_USER or MAIL_PASS not set in .env")
       return null
     }
 
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
+    // Remove any spaces from app password (Gmail allows both formats)
+    const cleanPass = pass.replace(/\s/g, "")
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,       // SSL — more reliable than port 587 on most hosts
       auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
+        user: user,
+        pass: cleanPass,
       },
     })
 
-    // Verify connection before sending
-    await transporter.verify()
-    console.log("mailSender: SMTP connection verified successfully")
-
-    let info = await transporter.sendMail({
-      from: `"EduAI LMS" <${process.env.MAIL_USER}>`,
+    const info = await transporter.sendMail({
+      from: `"EduAI LMS" <${user}>`,
       to: email,
       subject: title,
       html: body,
     })
 
-    console.log("mailSender: Email sent successfully. MessageId:", info.messageId)
+    console.log("Email sent:", info.messageId)
     return info
   } catch (error) {
     console.error("mailSender ERROR:", error.message)
-    if (error.message.includes("Invalid login") || error.message.includes("Username and Password")) {
-      console.error(">> Gmail auth failed. Your App Password may be wrong or expired.")
-      console.error(">> Go to: https://myaccount.google.com/apppasswords and generate a new one.")
-      console.error(">> Make sure 2-Step Verification is ON for your Google account.")
+    if (
+      error.message.includes("Invalid login") ||
+      error.message.includes("Username and Password") ||
+      error.message.includes("535")
+    ) {
+      console.error("=== GMAIL AUTH FAILED ===")
+      console.error("1. Go to: https://myaccount.google.com/apppasswords")
+      console.error("2. Generate a NEW App Password for 'Mail'")
+      console.error("3. Update MAIL_PASS in your .env (no spaces needed)")
+      console.error("4. Make sure 2-Step Verification is ON")
     }
     return null
   }
