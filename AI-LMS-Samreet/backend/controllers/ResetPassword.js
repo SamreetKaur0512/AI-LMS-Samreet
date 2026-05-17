@@ -70,10 +70,11 @@ exports.resetPassword = async (req, res) => {
     }
 
     const encryptedPassword = await bcrypt.hash(password, 10);
+    console.log("Resetting password for token:", token, "user:", userDetails.email);
 
-    // Use $set explicitly and clear token after use
-    const updated = await User.findOneAndUpdate(
-      { token },
+    // Find user by _id (most reliable) and update password
+    const updated = await User.findByIdAndUpdate(
+      userDetails._id,
       {
         $set: { password: encryptedPassword },
         $unset: { token: 1, resetPasswordExpires: 1 },

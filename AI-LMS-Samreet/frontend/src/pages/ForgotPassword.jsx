@@ -2,7 +2,6 @@ import { useState } from "react"
 import { BiArrowBack } from "react-icons/bi"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
-
 import { getPasswordResetToken } from "../services/operations/authAPI"
 
 function ForgotPassword() {
@@ -10,9 +9,11 @@ function ForgotPassword() {
   const [emailSent, setEmailSent] = useState(false)
   const dispatch = useDispatch()
   const { loading } = useSelector((state) => state.auth)
+  const submittingRef = useRef(false)  // prevents double submit
 
   const handleOnSubmit = (e) => {
     e.preventDefault()
+    if (loading || emailSent) return
     dispatch(getPasswordResetToken(email, setEmailSent))
   }
 
@@ -49,9 +50,10 @@ function ForgotPassword() {
             )}
             <button
               type="submit"
-              className="mt-6 w-full rounded-[8px] bg-yellow-50 py-[12px] px-[12px] font-medium text-richblack-900"
+              disabled={loading}
+              className="mt-6 w-full rounded-[8px] bg-yellow-50 py-[12px] px-[12px] font-medium text-richblack-900 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {!emailSent ? "Sumbit" : "Resend Email"}
+              {!emailSent ? "Submit" : "Resend Email"}
             </button>
           </form>
           <div className="mt-6 flex items-center justify-between">
