@@ -2,10 +2,14 @@ const nodemailer = require("nodemailer")
 
 const mailSender = async (email, title, body) => {
   try {
-    console.log(`mailSender: transporter created for ${process.env.MAIL_USER}`)
+    console.log("MAIL CONFIG:", {
+      host: process.env.MAIL_HOST,
+      user: process.env.MAIL_USER,
+      passLength: process.env.MAIL_PASS?.length,
+    })
 
     let transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
+      host: process.env.MAIL_HOST || "smtp-relay.brevo.com",
       port: 587,
       secure: false,
       auth: {
