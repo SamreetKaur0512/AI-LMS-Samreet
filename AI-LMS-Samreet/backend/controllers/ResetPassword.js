@@ -70,23 +70,15 @@ exports.resetPassword = async (req, res) => {
     }
 
     const encryptedPassword = await bcrypt.hash(password, 10);
-    console.log("Resetting password for token:", token, "user:", userDetails.email);
+    console.log("Resetting password for user:", userDetails.email);
 
-    // Find user by _id (most reliable) and update password
-    const updated = await User.findByIdAndUpdate(
-      userDetails._id,
-      {
-        $set: { password: encryptedPassword },
-        $unset: { token: 1, resetPasswordExpires: 1 },
-      },
-      { new: true }
-    );
+    // Directly set on the document and save — most reliable approach
+    userDetails.password = encryptedPassword;
+    userDetails.token = undefined;
+    userDetails.resetPasswordExpires = undefined;
+    await userDetails.save();
 
-    if (!updated) {
-      return res.json({ success: false, message: "Failed to update password." });
-    }
-
-    console.log("Password reset successfully for:", updated.email);
+    console.log("Password reset successfully for:", userDetails.email);
 
     return res.json({
       success: true,
