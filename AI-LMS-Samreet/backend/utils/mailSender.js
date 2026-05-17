@@ -9,15 +9,12 @@ const mailSender = async (email, title, body) => {
     })
 
     let transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST || "smtp-relay.brevo.com",
-      port: 587,
-      secure: false,
+      host: "smtp-relay.brevo.com",
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
       },
     })
 
