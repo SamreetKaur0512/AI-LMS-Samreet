@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react"
 import ReactStars from "react-rating-stars-component"
 import { Swiper, SwiperSlide } from "swiper/react"
 import "swiper/css"
-import "swiper/css/free-mode"
 import "swiper/css/pagination"
-import "../../App.css"
 import { FaStar } from "react-icons/fa"
-import { Autoplay, FreeMode, Pagination } from "swiper"
+import { Autoplay, Pagination } from "swiper"
 import { apiConnector } from "../../services/apiconnector"
 import { ratingsEndpoints } from "../../services/apis"
 
@@ -27,31 +25,33 @@ function ReviewSlider() {
   }, [])
 
   return (
-    <div className="text-white">
-      <div className="my-[50px] w-full px-4 lg:max-w-maxContent lg:px-0">
+    <div className="text-white w-full">
+      <div className="my-[50px] w-full px-4 lg:max-w-maxContent lg:mx-auto lg:px-0">
         <Swiper
           slidesPerView={1}
           spaceBetween={16}
-          loop={reviews.length > 1}
-          freeMode={false}
+          loop={reviews.length > 3}
           autoplay={
             reviews.length > 1
               ? { delay: 3000, disableOnInteraction: true }
               : false
           }
-          pagination={{ clickable: true }}
+          pagination={{
+            clickable: true,
+            bulletActiveClass: "swiper-pagination-bullet-active",
+          }}
           breakpoints={{
             480: { slidesPerView: 1, spaceBetween: 16 },
             640: { slidesPerView: 2, spaceBetween: 20 },
             1024: { slidesPerView: 3, spaceBetween: 24 },
             1280: { slidesPerView: 4, spaceBetween: 25 },
           }}
-          modules={[FreeMode, Pagination, Autoplay]}
-          className="w-full pb-10"
+          modules={[Pagination, Autoplay]}
+          className="w-full pb-12"
         >
           {reviews.map((review, i) => (
-            <SwiperSlide key={i}>
-              <div className="flex flex-col gap-3 bg-richblack-800 p-4 rounded-lg text-[14px] text-richblack-25 h-full">
+            <SwiperSlide key={i} style={{ height: "auto" }}>
+              <div className="flex flex-col gap-3 bg-richblack-800 p-4 rounded-lg text-[14px] text-richblack-25 h-full min-h-[150px]">
                 <div className="flex items-center gap-4">
                   <img
                     src={
@@ -69,7 +69,7 @@ function ReviewSlider() {
                     </h2>
                   </div>
                 </div>
-                <p className="font-medium text-richblack-25">
+                <p className="font-medium text-richblack-25 flex-1">
                   {review?.review.split(" ").length > truncateWords
                     ? `${review?.review.split(" ").slice(0, truncateWords).join(" ")} ...`
                     : `${review?.review}`}

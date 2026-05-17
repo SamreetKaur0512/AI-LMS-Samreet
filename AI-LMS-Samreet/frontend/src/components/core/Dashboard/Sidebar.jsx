@@ -27,8 +27,28 @@ export default function Sidebar() {
   }
 
   const SidebarContent = () => (
-    <div className="flex h-full flex-col py-10">
-      <div className="flex flex-col">
+    <div className="flex h-full flex-col pt-6 pb-6">
+      {/* User info mini section */}
+      {user && (
+        <div className="flex items-center gap-3 px-5 pb-5 border-b border-richblack-700 mb-3">
+          <img
+            src={user?.image || `https://api.dicebear.com/5.x/initials/svg?seed=${user?.firstName}`}
+            alt="profile"
+            className="h-9 w-9 rounded-full object-cover flex-shrink-0 border-2 border-yellow-500"
+          />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-richblack-5 truncate">
+              {user?.firstName} {user?.lastName}
+            </p>
+            <p className="text-xs text-richblack-400 truncate capitalize">
+              {user?.accountType?.toLowerCase()}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Nav links */}
+      <div className="flex flex-col flex-1">
         {sidebarLinks.map((link) => {
           if (link.type && user?.accountType !== link.type) return null
           return (
@@ -38,7 +58,10 @@ export default function Sidebar() {
           )
         })}
       </div>
-      <div className="mx-auto mt-6 mb-6 h-[1px] w-10/12 bg-richblack-700" />
+
+      <div className="mx-auto my-4 h-[1px] w-10/12 bg-richblack-700" />
+
+      {/* Bottom: Settings + Logout */}
       <div className="flex flex-col">
         <div onClick={() => setMobileOpen(false)}>
           <SidebarLink
@@ -58,7 +81,7 @@ export default function Sidebar() {
               btn2Handler: () => setConfirmationModal(null),
             })
           }}
-          className="px-8 py-2 text-sm font-medium text-richblack-300"
+          className="px-8 py-2 text-sm font-medium text-richblack-300 hover:text-richblack-100 hover:bg-richblack-700 transition-all duration-200 text-left"
         >
           <div className="flex items-center gap-x-2">
             <VscSignOut className="text-lg" />
@@ -71,25 +94,29 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile hamburger button */}
+      {/* Mobile hamburger button - fixed at top left inside the page */}
       <button
-        className="fixed top-[4.5rem] left-3 z-50 flex items-center justify-center rounded-full bg-richblack-800 border border-richblack-600 p-2 shadow-lg md:hidden"
+        className="fixed top-[4.2rem] left-3 z-50 flex items-center justify-center rounded-full bg-richblack-700 border border-richblack-500 p-2 shadow-lg md:hidden"
         onClick={() => setMobileOpen(!mobileOpen)}
+        aria-label="Toggle sidebar"
       >
-        {mobileOpen ? <MdClose size={22} className="text-white" /> : <HiMenuAlt1 size={22} className="text-white" />}
+        {mobileOpen
+          ? <MdClose size={20} className="text-richblack-100" />
+          : <HiMenuAlt1 size={20} className="text-richblack-100" />
+        }
       </button>
 
-      {/* Mobile overlay */}
+      {/* Mobile overlay backdrop */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/60 md:hidden"
+          className="fixed inset-0 z-30 bg-black/70 backdrop-blur-sm md:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
-      {/* Mobile sidebar */}
+      {/* Mobile sidebar drawer */}
       <div
-        className={`fixed top-[3.5rem] left-0 z-40 h-[calc(100vh-3.5rem)] w-[220px] transform bg-richblack-800 border-r border-richblack-700 transition-transform duration-300 md:hidden ${
+        className={`fixed top-[3.5rem] left-0 z-40 h-[calc(100vh-3.5rem)] w-[240px] transform bg-richblack-800 border-r border-richblack-700 shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

@@ -96,88 +96,32 @@ details > summary::-webkit-details-marker {
     rgba(14, 26, 45, 0.24) -1.4%,
     rgba(17, 30, 50, 0.38) 104.96%
   );
-  /* backdrop-filter: blur(26px); */
 }
 .homepage_bg {
   background: url("../src/assets/Images/bghome.svg");
-  /* background-size: contain; */
 }
 
 @keyframes spinner-bulqg1 {
   0% {
     clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
   }
-
   12.5% {
-    clip-path: polygon(
-      50% 50%,
-      0 0,
-      50% 0%,
-      100% 0%,
-      100% 0%,
-      100% 0%,
-      100% 0%
-    );
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 0%, 100% 0%, 100% 0%);
   }
-
   25% {
-    clip-path: polygon(
-      50% 50%,
-      0 0,
-      50% 0%,
-      100% 0%,
-      100% 100%,
-      100% 100%,
-      100% 100%
-    );
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%);
   }
-
   50% {
-    clip-path: polygon(
-      50% 50%,
-      0 0,
-      50% 0%,
-      100% 0%,
-      100% 100%,
-      50% 100%,
-      0% 100%
-    );
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%);
   }
-
   62.5% {
-    clip-path: polygon(
-      50% 50%,
-      100% 0,
-      100% 0%,
-      100% 0%,
-      100% 100%,
-      50% 100%,
-      0% 100%
-    );
+    clip-path: polygon(50% 50%, 100% 0, 100% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%);
   }
-
   75% {
-    clip-path: polygon(
-      50% 50%,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      50% 100%,
-      0% 100%
-    );
+    clip-path: polygon(50% 50%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 50% 100%, 0% 100%);
   }
-
   100% {
-    clip-path: polygon(
-      50% 50%,
-      50% 100%,
-      50% 100%,
-      50% 100%,
-      50% 100%,
-      50% 100%,
-      0% 100%
-    );
+    clip-path: polygon(50% 50%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 0% 100%);
   }
 }
 
@@ -185,15 +129,12 @@ details > summary::-webkit-details-marker {
   0% {
     transform: scaleY(1) rotate(0deg);
   }
-
   49.99% {
     transform: scaleY(1) rotate(135deg);
   }
-
   50% {
     transform: scaleY(-1) rotate(0deg);
   }
-
   100% {
     transform: scaleY(-1) rotate(-135deg);
   }
@@ -204,7 +145,6 @@ details > summary::-webkit-details-marker {
   fill: #ffd60a !important;
   color: #ffd60a !important;
 }
-
 .inactive-icon {
   fill: #838894;
   color: #838894;
@@ -214,25 +154,6 @@ details > summary::-webkit-details-marker {
 .yellowButton {
   @apply cursor-pointer rounded-md bg-yellow-50 px-[20px] py-[8px] font-semibold text-richblack-900;
 }
-
-/* Swiper CSS Starts */
-/* .swiper {
-  max-width: 1200px;
-  width: 91.66%;
-  height: 185px;
-  margin: 50px 0px;
-} */
-
-/* Leave Swiper slide sizing to the library so slides can use slidesPerView correctly */
-.swiper-slide {
-  width: auto !important;
-  height: auto !important;
-}
-/* .swiper-slide {
-  @apply bg-richblack-800 text-richblack-25 p-3 text-[14px];
-} */
-/* Swiper CSS Ends */
-
 .blackButton {
   @apply cursor-pointer rounded-md bg-richblack-800 px-[20px] py-[8px] font-semibold text-richblack-5;
 }
@@ -244,4 +165,80 @@ details > summary::-webkit-details-marker {
 }
 .section_heading {
   @apply text-2xl font-bold text-richblack-5 lg:text-4xl;
+}
+
+/* ==========================================
+   SWIPER - Review Slider Fix
+   ========================================== */
+
+/* 
+  IMPORTANT FIX: 
+  Remove width:auto override so Swiper can properly 
+  calculate slide widths for slidesPerView to work correctly.
+  The old code had `width: auto !important` which broke the layout.
+*/
+.swiper-slide {
+  /* Let Swiper control slide width — do NOT override with auto */
+  height: auto !important; /* allow equal-height cards */
+}
+
+/* Pagination dots - visible and styled */
+.swiper-pagination {
+  position: relative !important;
+  bottom: 0 !important;
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: #585d69;
+  opacity: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swiper-pagination-bullet-active {
+  background: #ffd60a;
+  width: 22px;
+  border-radius: 4px;
+}
+
+/* ==========================================
+   MOBILE - General responsive improvements
+   ========================================== */
+
+/* Ensure dashboard layout works on mobile */
+@media (max-width: 768px) {
+  /* Give enough left padding in dashboard content so hamburger button 
+     doesn't overlap the page content */
+  .dashboard-content-area {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Navbar logo text size on mobile */
+  .navbar-logo-text {
+    font-size: 1.4rem !important;
+  }
+
+  /* Prevent text overflow in small screens */
+  .truncate-mobile {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* ==========================================
+   SIDEBAR - Smooth shadow when open
+   ========================================== */
+.sidebar-mobile-shadow {
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
 }
