@@ -75,8 +75,14 @@ function CourseDetails() {
   // Total number of lectures
   const [totalNoOfLectures, setTotalNoOfLectures] = useState(0)
   const [quizLoading, setQuizLoading] = useState(false)
-  const isUserEnrolled = user?.courses?.some(
-    (courseRef) => courseRef?.toString() === courseId.toString() || courseRef?._id?.toString() === courseId.toString()
+  // Check enrollment using both user.courses and studentsEnrolled array for reliability
+  const isUserEnrolled = user && (
+    user?.courses?.some(
+      (courseRef) => courseRef?.toString() === courseId.toString() || courseRef?._id?.toString() === courseId.toString()
+    ) ||
+    response?.data?.courseDetails?.studentsEnrolled?.some(
+      (s) => s?.toString() === user?._id?.toString() || s?._id?.toString() === user?._id?.toString()
+    )
   )
 
   useEffect(() => {
@@ -273,7 +279,6 @@ function CourseDetails() {
                           return
                         }
                         dispatch(addToCart(response?.data?.courseDetails))
-                        toast.success("Course added to cart")
                       }}
                     >
                       Add to Cart
