@@ -79,7 +79,7 @@ function Navbar() {
       )
     }
     return NavbarLinks.map((link, index) => (
-      <li key={index} onClick={onLinkClick}>
+      <li key={index} onClick={onLinkClick} className="px-4 py-2.5 hover:bg-richblack-700 transition-all">
         {link.title === "Catalog" ? (
           <div className={`group relative flex cursor-pointer items-center gap-1 ${matchRoute("/catalog/:catalogName") ? "text-yellow-25" : "text-richblack-25"}`}>
             <p>{link.title}</p>
@@ -202,8 +202,8 @@ function Navbar() {
             {token && <ProfileDropdown />}
           </div>
 
-          {/* Mobile Right: profile + hamburger */}
-          <div className="flex items-center gap-2 md:hidden">
+          {/* Mobile Right: cart + profile + hamburger */}
+          <div className="flex items-center gap-x-3 md:hidden">
             {user && !isAdmin && !isPreview && user?.accountType !== ACCOUNT_TYPE.INSTRUCTOR && (
               <Link to="/dashboard/cart" className="relative">
                 <AiOutlineShoppingCart className="text-xl text-richblack-100" />
@@ -214,7 +214,11 @@ function Navbar() {
                 )}
               </Link>
             )}
-            {token && <ProfileDropdown />}
+            {token && (
+              <div className="flex-shrink-0">
+                <ProfileDropdown />
+              </div>
+            )}
             {!token && (
               <div className="flex gap-2">
                 <Link to="/login">
@@ -229,9 +233,9 @@ function Navbar() {
                 </Link>
               </div>
             )}
-            {/* Hamburger button */}
+            {/* Hamburger button — always last, never overlaps profile */}
             <button
-              className="flex items-center justify-center rounded-md p-1.5 text-richblack-100 hover:bg-richblack-700 transition-all"
+              className="flex flex-shrink-0 items-center justify-center rounded-md p-1.5 text-richblack-100 hover:bg-richblack-700 transition-all"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label="Toggle navigation menu"
             >
