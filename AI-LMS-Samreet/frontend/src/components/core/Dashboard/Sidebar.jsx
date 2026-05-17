@@ -94,17 +94,16 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile hamburger button - fixed at top left inside the page */}
-      <button
-        className="fixed top-[4.2rem] left-3 z-50 flex items-center justify-center rounded-full bg-richblack-700 border border-richblack-500 p-2 shadow-lg md:hidden"
-        onClick={() => setMobileOpen(!mobileOpen)}
-        aria-label="Toggle sidebar"
-      >
-        {mobileOpen
-          ? <MdClose size={20} className="text-richblack-100" />
-          : <HiMenuAlt1 size={20} className="text-richblack-100" />
-        }
-      </button>
+      {/* Mobile hamburger button - only shown when sidebar is closed */}
+      {!mobileOpen && (
+        <button
+          className="fixed top-[4.2rem] left-3 z-50 flex items-center justify-center rounded-full bg-richblack-700 border border-richblack-500 p-2 shadow-lg md:hidden"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open sidebar"
+        >
+          <HiMenuAlt1 size={20} className="text-richblack-100" />
+        </button>
+      )}
 
       {/* Mobile overlay backdrop */}
       {mobileOpen && (
@@ -120,6 +119,14 @@ export default function Sidebar() {
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
+        {/* Close button inside sidebar at top-right */}
+        <button
+          className="absolute top-3 right-3 z-10 flex items-center justify-center rounded-full bg-richblack-700 border border-richblack-500 p-1.5"
+          onClick={() => setMobileOpen(false)}
+          aria-label="Close sidebar"
+        >
+          <MdClose size={18} className="text-richblack-100" />
+        </button>
         <SidebarContent />
       </div>
 
