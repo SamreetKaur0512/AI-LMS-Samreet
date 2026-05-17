@@ -1,11 +1,13 @@
-import * as Icons from "react-icons/vsc"
+import * as VscIcons from "react-icons/vsc"
+import * as FaIcons from "react-icons/fa"
 import { useDispatch } from "react-redux"
 import { NavLink, matchPath, useLocation } from "react-router-dom"
 
 import { resetCourseState } from "../../../slices/courseSlice"
 
 export default function SidebarLink({ link, iconName }) {
-  const Icon = Icons[iconName]
+  // Support both VSC and FA icon libraries
+  const Icon = VscIcons[iconName] || FaIcons[iconName]
   const location = useLocation()
   const dispatch = useDispatch()
 
@@ -20,7 +22,7 @@ export default function SidebarLink({ link, iconName }) {
       className={`relative shrink-0 px-5 py-2 text-sm font-medium md:px-8 ${
         matchRoute(link.path)
           ? "bg-yellow-800 text-yellow-50"
-          : "bg-opacity-0 text-richblack-300"   
+          : "bg-opacity-0 text-richblack-300"
       } transition-all duration-200`}
     >
       <span
@@ -29,8 +31,7 @@ export default function SidebarLink({ link, iconName }) {
         }`}
       ></span>
       <div className="flex items-center gap-x-2">
-
-        {Icon ? <Icon className="text-lg" /> : <div className="w-[18px]"></div>}
+        {Icon ? <Icon className="text-lg flex-shrink-0" /> : <div className="w-[18px]"></div>}
         <span>{link.name}</span>
       </div>
     </NavLink>
