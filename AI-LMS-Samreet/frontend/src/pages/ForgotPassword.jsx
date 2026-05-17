@@ -9,8 +9,6 @@ function ForgotPassword() {
   const [emailSent, setEmailSent] = useState(false)
   const dispatch = useDispatch()
   const { loading } = useSelector((state) => state.auth)
-  const submittingRef = useRef(false)  // prevents double submit
-
   const handleOnSubmit = (e) => {
     e.preventDefault()
     if (loading || emailSent) return
