@@ -59,16 +59,16 @@ exports.signup = async (req, res) => {
     const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1)
     console.log(response)
     if (response.length === 0) {
-      // OTP not found for the email
+      console.log("SIGNUP FAIL: No OTP found for", email, "- it likely expired")
       return res.status(400).json({
         success: false,
-        message: "The OTP is not valid",
+        message: "OTP has expired. Please request a new one.",
       })
     } else if (otp !== response[0].otp) {
-      // Invalid OTP
+      console.log("SIGNUP FAIL: OTP mismatch for", email, "- entered:", otp, "expected:", response[0].otp)
       return res.status(400).json({
         success: false,
-        message: "The OTP is not valid",
+        message: "The OTP is incorrect. Please try again.",
       })
     }
 
@@ -220,11 +220,26 @@ exports.sendotp = async (req, res) => {
       })
     }
     const otpPayload = { email, otp }
-    const otpBody = await OTP.create(otpPayload)
-    console.log("OTP Body", otpBody)
+    await OTP.create(otpPayload)
+
+    // Send email and wait for confirmation before responding
+    const emailResult = await mailSender(
+      email,
+      "Your OTP - EduAI LMS",
+      require("../mail/templates/emailVerificationTemplate")(otp)
+    )
+
+    if (!emailResult) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send OTP email. Please try again.",
+      })
+    }
+
+    console.log("OTP email sent to:", email)
     res.status(200).json({
       success: true,
-      message: `OTP Sent Successfully`,
+      message: "OTP Sent Successfully",
     })
   } catch (error) {
     console.log(error.message)
