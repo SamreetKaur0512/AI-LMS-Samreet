@@ -1,30 +1,42 @@
 const nodemailer = require("nodemailer")
 
+// Create transporter ONCE at startup — reused for all emails (connection pooling)
+let transporter = null
+
+function getTransporter() {
+  if (transporter) return transporter
+
+  const user = process.env.MAIL_USER
+  const pass = process.env.MAIL_PASS
+
+  if (!user || !pass) {
+    console.error("mailSender: MAIL_USER or MAIL_PASS not set in .env")
+    return null
+  }
+
+  transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    pool: true,          // keep connection alive and reuse it
+    maxConnections: 3,
+    auth: {
+      user: user,
+      pass: pass.replace(/\s/g, ""),
+    },
+  })
+
+  console.log("mailSender: transporter created for", user)
+  return transporter
+}
+
 const mailSender = async (email, title, body) => {
   try {
-    const user = process.env.MAIL_USER
-    const pass = process.env.MAIL_PASS
+    const t = getTransporter()
+    if (!t) return null
 
-    if (!user || !pass) {
-      console.error("mailSender: MAIL_USER or MAIL_PASS not set in .env")
-      return null
-    }
-
-    // Remove any spaces from app password (Gmail allows both formats)
-    const cleanPass = pass.replace(/\s/g, "")
-
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,       // SSL — more reliable than port 587 on most hosts
-      auth: {
-        user: user,
-        pass: cleanPass,
-      },
-    })
-
-    const info = await transporter.sendMail({
-      from: `"EduAI LMS" <${user}>`,
+    const info = await t.sendMail({
+      from: `"EduAI LMS" <${process.env.MAIL_USER}>`,
       to: email,
       subject: title,
       html: body,
@@ -34,16 +46,10 @@ const mailSender = async (email, title, body) => {
     return info
   } catch (error) {
     console.error("mailSender ERROR:", error.message)
-    if (
-      error.message.includes("Invalid login") ||
-      error.message.includes("Username and Password") ||
-      error.message.includes("535")
-    ) {
-      console.error("=== GMAIL AUTH FAILED ===")
-      console.error("1. Go to: https://myaccount.google.com/apppasswords")
-      console.error("2. Generate a NEW App Password for 'Mail'")
-      console.error("3. Update MAIL_PASS in your .env (no spaces needed)")
-      console.error("4. Make sure 2-Step Verification is ON")
+    if (error.message.includes("Invalid login") || error.message.includes("535")) {
+      console.error(">> Gmail auth failed — regenerate App Password at https://myaccount.google.com/apppasswords")
+      // Reset transporter so next call retries with fresh connection
+      transporter = null
     }
     return null
   }
