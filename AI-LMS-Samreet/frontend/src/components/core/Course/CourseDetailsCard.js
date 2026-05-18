@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
 import { addToCart } from "slices/cartSlice"
-import { ACCOUNT_TYPE } from "../../../utils/constants"
+import { ACCOUNT_TYPE } from "utils/constants"
 
 
 function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {

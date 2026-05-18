@@ -19,7 +19,7 @@ import { formatDate } from "../services/formatDate"
 import { fetchCourseDetails } from "../services/operations/courseDetailsAPI"
 import { buyCourse } from "../services/operations/studentFeaturesAPI"
 import { addToCart } from "slices/cartSlice"
-import GetAvgRating from "../utils/avgRating"
+import GetAvgRating from "utils/avgRating"
 import Error from "./Error"
 
 function CourseDetails() {

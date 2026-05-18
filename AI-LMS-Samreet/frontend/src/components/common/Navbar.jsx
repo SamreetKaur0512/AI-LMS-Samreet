@@ -6,7 +6,7 @@ import { Link, matchPath, useLocation, useSearchParams } from "react-router-dom"
 import { NavbarLinks } from "../../data/navbar-links"
 import { apiConnector } from "../../services/apiconnector"
 import { categories, catalogData } from "../../services/apis"
-import { ACCOUNT_TYPE } from "../../utils/constants"
+import { ACCOUNT_TYPE } from "utils/constants"
 import ProfileDropdown from "../core/Auth/ProfileDropDown"
 
 function Navbar() {
