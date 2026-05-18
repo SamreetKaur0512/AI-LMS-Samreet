@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import Footer from "../components/common/Footer"
 import HighlightText from "../components/core/HomePage/HighlightText"
-import { openChat } from "../slices/chatSlice"
+import { openChat } from "slices/chatSlice"
 import { FaRobot, FaCalendarAlt, FaClipboardList, FaBookOpen, FaUserShield, FaChartBar } from "react-icons/fa"
 import { Link } from "react-router-dom"
 

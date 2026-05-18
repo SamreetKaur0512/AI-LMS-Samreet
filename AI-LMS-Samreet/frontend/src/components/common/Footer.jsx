@@ -2,7 +2,7 @@ import React from "react"
 import { FooterLink2 } from "../../data/footer-links"
 import { Link, useLocation } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-import { openChat } from "../../slices/chatSlice"
+import { openChat } from "/slices/chatSlice"
 import { FaFacebook, FaGoogle, FaTwitter, FaYoutube } from "react-icons/fa"
 
 const BottomFooter = ["Privacy Policy", "Cookie Policy", "Terms"]

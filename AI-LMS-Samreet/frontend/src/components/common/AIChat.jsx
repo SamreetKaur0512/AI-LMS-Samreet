@@ -4,7 +4,7 @@ import { AiOutlineClose, AiOutlineSend } from "react-icons/ai"
 import { FaRobot } from "react-icons/fa"
 import { apiConnector } from "../../services/apiconnector"
 import { AI_CHAT_API } from "../../services/apis"
-import { toggleChat, closeChat } from "../../slices/chatSlice"
+import { toggleChat, closeChat } from "slices/chatSlice"
 
 const AIChat = () => {
   const dispatch = useDispatch()

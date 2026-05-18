@@ -6,7 +6,7 @@ import { FaShareSquare } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
-import { addToCart } from "../../../slices/cartSlice"
+import { addToCart } from "slices/cartSlice"
 import { ACCOUNT_TYPE } from "../../../utils/constants"
 
 

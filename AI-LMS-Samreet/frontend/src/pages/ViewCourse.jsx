@@ -12,7 +12,7 @@ import {
   setCourseSectionData,
   setEntireCourseData,
   setTotalNoOfLectures,
-} from "../slices/viewCourseSlice"
+} from "slices/viewCourseSlice"
 
 export default function ViewCourse() {
   const { courseId } = useParams()
