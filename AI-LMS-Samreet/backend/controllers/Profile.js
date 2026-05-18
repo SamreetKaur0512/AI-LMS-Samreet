@@ -1,9 +1,10 @@
 const Profile = require("../models/Profile")
 const CourseProgress = require("../models/CourseProgress")
-
+const RatingAndReview = require("../models/RatingAndReview")
 const Course = require("../models/Course")
 const User = require("../models/User")
 const { uploadImageToCloudinary } = require("../utils/imageUploader")
+const cloudinary = require("cloudinary").v2
 const mongoose = require("mongoose")
 const { convertSecondsToDuration } = require("../utils/secToDuration")
 // Method for updating a profile
@@ -68,10 +69,37 @@ exports.deleteAccount = async (req, res) => {
         message: "User not found",
       })
     }
-    // Delete Assosiated Profile with the User
+    // 1. Delete profile image from Cloudinary
+    if (user.image && user.image.includes("cloudinary")) {
+      try {
+        // Extract public_id from cloudinary URL
+        const urlParts = user.image.split("/")
+        const fileName = urlParts[urlParts.length - 1].split(".")[0]
+        const folder = process.env.FOLDER_NAME || "ai_lms"
+        const publicId = `${folder}/${fileName}`
+        await cloudinary.uploader.destroy(publicId)
+        console.log("Profile image deleted from Cloudinary:", publicId)
+      } catch (err) {
+        console.log("Could not delete profile image from Cloudinary:", err.message)
+      }
+    }
+
+    // 2. Delete user ratings and reviews, and remove them from courses
+    const userReviews = await RatingAndReview.find({ user: id })
+    for (const review of userReviews) {
+      await Course.findByIdAndUpdate(review.course, {
+        $pull: { ratingAndReviews: review._id }
+      })
+    }
+    await RatingAndReview.deleteMany({ user: id })
+    console.log("Deleted", userReviews.length, "reviews for user:", id)
+
+    // 3. Delete associated Profile
     await Profile.findByIdAndDelete({
       _id: new mongoose.Types.ObjectId(user.additionalDetails),
     })
+
+    // 4. Remove user from enrolled courses
     for (const courseId of user.courses) {
       await Course.findByIdAndUpdate(
         courseId,
@@ -79,13 +107,58 @@ exports.deleteAccount = async (req, res) => {
         { new: true }
       )
     }
-    // Now Delete User
+
+    // 5. If instructor, handle their courses
+    if (user.accountType === "Instructor") {
+      const Section = require("../models/Section")
+      const SubSection = require("../models/SubSection")
+      const Category = require("../models/Category")
+      const instructorCourses = await Course.find({ instructor: id })
+
+      for (const course of instructorCourses) {
+        const enrolledCount = course.studentsEnrolled?.length || 0
+
+        if (enrolledCount > 0) {
+          // Students enrolled — keep course, anonymize instructor
+          // isAnonymized hides it from catalog for non-enrolled users
+          await Course.findByIdAndUpdate(course._id, {
+            $set: { instructorName: "Anonymous Instructor", instructor: null, isAnonymized: true }
+          })
+          console.log("Kept course with anonymous instructor:", course.courseName, "| enrolled:", enrolledCount)
+        } else {
+          // No enrolled students — fully delete course
+          for (const sectionId of course.courseContent) {
+            const section = await Section.findById(sectionId)
+            if (section) {
+              for (const subSectionId of section.subSection) {
+                await SubSection.findByIdAndDelete(subSectionId)
+              }
+            }
+            await Section.findByIdAndDelete(sectionId)
+          }
+          if (course.category) {
+            await Category.findByIdAndUpdate(course.category, {
+              $pull: { courses: course._id }
+            })
+          }
+          await RatingAndReview.deleteMany({ course: course._id })
+          await Course.findByIdAndDelete(course._id)
+          console.log("Fully deleted course:", course.courseName)
+        }
+      }
+      console.log("Processed", instructorCourses.length, "courses for instructor:", id)
+    }
+
+    // 6. Delete course progress
+    await CourseProgress.deleteMany({ userId: id })
+
+    // 7. Delete user
     await User.findByIdAndDelete({ _id: id })
+
     res.status(200).json({
       success: true,
       message: "User deleted successfully",
     })
-    await CourseProgress.deleteMany({ userId: id })
   } catch (error) {
     console.log(error)
     res
@@ -128,6 +201,22 @@ exports.updateDisplayPicture = async (req, res) => {
 
     const displayPicture = req.files.displayPicture
     const userId = req.user.id
+
+    // Delete old profile image from Cloudinary before uploading new one
+    const existingUser = await User.findById(userId)
+    if (existingUser?.image && existingUser.image.includes("cloudinary")) {
+      try {
+        const urlParts = existingUser.image.split("/")
+        const fileName = urlParts[urlParts.length - 1].split(".")[0]
+        const folder = process.env.FOLDER_NAME || "ai_lms"
+        const publicId = `${folder}/${fileName}`
+        await cloudinary.uploader.destroy(publicId)
+        console.log("Old profile image deleted from Cloudinary:", publicId)
+      } catch (err) {
+        console.log("Could not delete old profile image:", err.message)
+      }
+    }
+
     const image = await uploadImageToCloudinary(
       displayPicture,
       process.env.FOLDER_NAME,

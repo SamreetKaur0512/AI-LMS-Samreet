@@ -205,7 +205,7 @@ exports.editCourse = async (req, res) => {
 exports.getAllCourses = async (req, res) => {
   try {
     const allCourses = await Course.find(
-      { status: "Published" },
+      { status: "Published", isAnonymized: { $ne: true } },
       {
         courseName: true,
         price: true,
@@ -509,41 +509,60 @@ exports.deleteCourse = async (req, res) => {
   try {
     const { courseId } = req.body
 
-    // Find the course
     const course = await Course.findById(courseId)
     if (!course) {
       return res.status(404).json({ message: "Course not found" })
     }
 
-    // Unenroll students from the course
-    const studentsEnrolled = course?.studentsEnrolled
-    for (const studentId of studentsEnrolled) {
-      await User.findByIdAndUpdate(studentId, {
-        $pull: { courses: courseId },
+    const enrolledCount = course.studentsEnrolled?.length || 0
+
+    if (enrolledCount > 0) {
+      // Students are enrolled — keep course but anonymize instructor
+      // isAnonymized=true hides it from catalog/search for non-enrolled users
+      await Course.findByIdAndUpdate(courseId, {
+        $set: { instructorName: "Anonymous Instructor", instructor: null, isAnonymized: true }
+      })
+      // Remove from instructor's course list only
+      await User.findByIdAndUpdate(course.instructor, {
+        $pull: { courses: courseId }
+      })
+      return res.status(200).json({
+        success: true,
+        kept: true,
+        message: `Course kept for ${enrolledCount} enrolled student(s). Your name has been replaced with "Anonymous Instructor".`,
       })
     }
 
+    // No enrolled students — fully delete
     // Delete sections and sub-sections
     const courseSections = course.courseContent
     for (const sectionId of courseSections) {
-      // Delete sub-sections of the section
       const section = await Section.findById(sectionId)
       if (section) {
-        const subSections = section.subSection
-        for (const subSectionId of subSections) {
+        for (const subSectionId of section.subSection) {
           await SubSection.findByIdAndDelete(subSectionId)
         }
       }
-
-      // Delete the section
       await Section.findByIdAndDelete(sectionId)
     }
 
-    // Delete the course
+    // Remove from category
+    if (course.category) {
+      const Category = require("../models/Category")
+      await Category.findByIdAndUpdate(course.category, {
+        $pull: { courses: courseId }
+      })
+    }
+
+    // Delete reviews
+    const RatingAndReview = require("../models/RatingAndReview")
+    await RatingAndReview.deleteMany({ course: courseId })
+
     await Course.findByIdAndDelete(courseId)
 
     return res.status(200).json({
       success: true,
+      kept: false,
       message: "Course deleted successfully",
     })
   } catch (error) {

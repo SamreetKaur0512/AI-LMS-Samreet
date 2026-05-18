@@ -6,8 +6,17 @@ const coursesSchema = new mongoose.Schema({
 	courseDescription: { type: String },
 	instructor: {
 		type: mongoose.Schema.Types.ObjectId,
-		required: true,
+		required: false,
+		default: null,
 		ref: "user",
+	},
+	instructorName: {
+		type: String,
+		default: null,
+	},
+	isAnonymized: {
+		type: Boolean,
+		default: false,
 	},
 	whatYouWillLearn: {
 		type: String,

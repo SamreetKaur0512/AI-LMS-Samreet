@@ -133,7 +133,7 @@ exports.getRecommendations = async (req, res) => {
 // Get recommendations for non-logged in users (popular courses)
 exports.getPopularCourses = async (req, res) => {
   try {
-    const popularCourses = await Course.find({ status: "Published" })
+    const popularCourses = await Course.find({ status: "Published", isAnonymized: { $ne: true } })
       .populate("instructor", "firstName lastName")
       .populate("category", "name")
       .select("courseName courseDescription thumbnail price tag studentsEnrolled ratingAndReviews instructor category")

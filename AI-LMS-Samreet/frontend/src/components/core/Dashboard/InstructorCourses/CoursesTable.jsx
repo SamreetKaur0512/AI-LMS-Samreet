@@ -132,6 +132,12 @@ function StatusBadge({ status }) {
 }
 
 function ActionButtons({ course, loading, navigate, setConfirmationModal, handleCourseDelete }) {
+  const enrolledCount = course?.studentsEnrolled?.length || 0
+
+  const deleteWarning = enrolledCount > 0
+    ? `This course has ${enrolledCount} enrolled student(s). It will remain accessible ONLY to those enrolled students with your name shown as "Anonymous Instructor". It will be hidden from catalog and no new students can enroll.`
+    : `This course has no enrolled students and will be permanently deleted.`
+
   return (
     <>
       <button disabled={loading} title="Edit"
@@ -142,9 +148,9 @@ function ActionButtons({ course, loading, navigate, setConfirmationModal, handle
       </button>
       <button disabled={loading} title="Delete"
         onClick={() => setConfirmationModal({
-          text1: "Do you want to delete this course?",
-          text2: "All the data related to this course will be deleted",
-          btn1Text: !loading ? "Delete" : "Loading...",
+          text1: "Delete this course?",
+          text2: deleteWarning,
+          btn1Text: !loading ? (enrolledCount > 0 ? "Anonymize & Remove" : "Delete") : "Loading...",
           btn2Text: "Cancel",
           btn1Handler: !loading ? () => handleCourseDelete(course._id) : () => {},
           btn2Handler: !loading ? () => setConfirmationModal(null) : () => {},
