@@ -69,6 +69,17 @@ export default function PublishCourse() {
       <p className="text-2xl font-semibold text-richblack-5">
         Publish Settings
       </p>
+
+      {/* Policy Notice */}
+      <div className="mt-4 mb-2 rounded-md border border-yellow-400 bg-yellow-900/20 p-4">
+        <p className="text-sm font-semibold text-yellow-50 mb-2">📢 Important — Please read before publishing:</p>
+        <ul className="list-disc pl-4 space-y-1 text-xs text-yellow-100">
+          <li>Once students enroll, this course <strong>cannot be fully deleted</strong> — it stays accessible only to enrolled students.</li>
+          <li>If you delete this course or your account, enrolled students will still see it but your name becomes <strong>"Anonymous Instructor"</strong>. No new students can enroll or find it.</li>
+          <li>Courses with <strong>no enrolled students</strong> are fully and permanently deleted.</li>
+        </ul>
+      </div>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Checkbox */}
         <div className="my-6 mb-8">
