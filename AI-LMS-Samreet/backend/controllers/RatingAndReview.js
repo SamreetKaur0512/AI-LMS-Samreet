@@ -134,10 +134,13 @@ exports.getAllRating = async (req, res) => {
                                         select: "courseName",
                                     })
                                     .exec();
+            const reviewsWithUsers = allReviews.filter(
+                (review) => review.user && review.course
+            );
             return res.status(200).json({
                 success:true,
                 message:"All reviews fetched successfully",
-                data:allReviews,
+                data:reviewsWithUsers,
             });
     }   
     catch(error) {

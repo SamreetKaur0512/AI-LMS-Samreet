@@ -120,6 +120,7 @@ function CourseDetails() {
   const firstSection = courseContent?.[0]
   const firstSubSection = firstSection?.subSection?.[0]
   const canStartCourse = firstSection?._id && firstSubSection?._id
+  const visibleReviews = ratingAndReviews?.filter((review) => review?.user) || []
 
   const handleStartCourse = () => {
     if (!canStartCourse) {
@@ -214,7 +215,7 @@ function CourseDetails() {
               <div className="text-md flex flex-wrap items-center gap-2">
                 <span className="text-yellow-25">{avgReviewCount}</span>
                 <RatingStars Review_Count={avgReviewCount} Star_Size={24} />
-                <span>{`(${ratingAndReviews.length} reviews)`}</span>
+                <span>{`(${visibleReviews.length} reviews)`}</span>
                 <span>{`${studentsEnrolled.length} students enrolled`}</span>
               </div>
               <div>
@@ -368,45 +369,51 @@ function CourseDetails() {
         </div>
 
         {/* Reviews Section */}
-        {ratingAndReviews?.length > 0 && (
+        {visibleReviews.length > 0 && (
           <div className="mx-auto box-content px-0 text-start text-richblack-5 lg:w-[1260px] lg:px-4">
             <div className="mx-auto max-w-maxContentTab lg:mx-0 xl:max-w-[810px]">
               <div className="my-8 border border-richblack-600 p-4 sm:p-8">
                 <p className="text-2xl font-semibold sm:text-3xl">Reviews & Ratings</p>
                 <div className="mt-5">
-                  {ratingAndReviews.map((review, index) => (
-                    <div key={index} className="mb-6 border-b border-richblack-600 pb-6 last:border-b-0 last:pb-0">
-                      <div className="flex items-center gap-4 mb-4">
-                        <img
-                          src={
-                            review?.user?.image
-                              ? review?.user?.image
-                              : `https://api.dicebear.com/5.x/initials/svg?seed=${review?.user?.firstName} ${review?.user?.lastName}`
-                          }
-                          alt={`${review?.user?.firstName} ${review?.user?.lastName}`}
-                          className="h-12 w-12 rounded-full object-cover"
-                        />
-                        <div>
-                          <p className="font-semibold text-richblack-5">
-                            {`${review?.user?.firstName} ${review?.user?.lastName}`}
-                          </p>
-                          <div className="flex items-center gap-2">
-                            <ReactStars
-                              count={5}
-                              value={review.rating}
-                              size={16}
-                              edit={false}
-                              activeColor="#ffd700"
-                              emptyIcon={<FaStar />}
-                              fullIcon={<FaStar />}
-                            />
-                            <span className="text-yellow-25">{review.rating.toFixed(1)}</span>
+                  {visibleReviews.map((review, index) => {
+                    const reviewerName = `${review.user.firstName || ""} ${
+                      review.user.lastName || ""
+                    }`.trim() || "Deleted User"
+
+                    return (
+                      <div key={review._id || index} className="mb-6 border-b border-richblack-600 pb-6 last:border-b-0 last:pb-0">
+                        <div className="flex items-center gap-4 mb-4">
+                          <img
+                            src={
+                              review.user.image
+                                ? review.user.image
+                                : `https://api.dicebear.com/5.x/initials/svg?seed=${reviewerName}`
+                            }
+                            alt={reviewerName}
+                            className="h-12 w-12 rounded-full object-cover"
+                          />
+                          <div>
+                            <p className="font-semibold text-richblack-5">
+                              {reviewerName}
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <ReactStars
+                                count={5}
+                                value={Number(review.rating || 0)}
+                                size={16}
+                                edit={false}
+                                activeColor="#ffd700"
+                                emptyIcon={<FaStar />}
+                                fullIcon={<FaStar />}
+                              />
+                              <span className="text-yellow-25">{Number(review.rating || 0).toFixed(1)}</span>
+                            </div>
                           </div>
                         </div>
+                        <p className="text-richblack-25">{review.review}</p>
                       </div>
-                      <p className="text-richblack-25">{review.review}</p>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
             </div>

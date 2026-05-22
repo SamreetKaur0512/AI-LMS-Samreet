@@ -4,6 +4,7 @@ const Profile = require("../models/Profile")
 const Course = require("../models/Course")
 const CourseProgress = require("../models/CourseProgress")
 const AIUsageLog = require("../models/AIUsageLog")
+const RatingAndReview = require("../models/RatingAndReview")
 const mongoose = require("mongoose")
 
 // ════════════════════════════════════════════════════════
@@ -174,6 +175,15 @@ exports.deleteUser = async (req, res) => {
     if (!user) return res.status(404).json({ success: false, message: "User not found" })
     if (user.accountType === "Admin") return res.status(403).json({ success: false, message: "Cannot delete an admin" })
     await Profile.findByIdAndDelete(user.additionalDetails)
+    const userReviews = await RatingAndReview.find({ user: user._id }).select("_id")
+    const reviewIds = userReviews.map((review) => review._id)
+    if (reviewIds.length > 0) {
+      await Course.updateMany(
+        { ratingAndReviews: { $in: reviewIds } },
+        { $pull: { ratingAndReviews: { $in: reviewIds } } }
+      )
+      await RatingAndReview.deleteMany({ _id: { $in: reviewIds } })
+    }
     // Remove from enrolled courses
     for (const courseId of user.courses) {
       await Course.findByIdAndUpdate(courseId, { $pull: { studentsEnrolled: user._id } })

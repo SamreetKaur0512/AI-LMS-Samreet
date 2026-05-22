@@ -335,11 +335,15 @@ exports.getCourseDetails = async (req, res) => {
     })
 
     const totalDuration = convertSecondsToDuration(totalDurationInSeconds)
+    const courseDetailsResponse = courseDetails.toObject()
+    courseDetailsResponse.ratingAndReviews = courseDetailsResponse.ratingAndReviews.filter(
+      (review) => review.user
+    )
 
     return res.status(200).json({
       success: true,
       data: {
-        courseDetails,
+        courseDetails: courseDetailsResponse,
         totalDuration,
       },
     })
