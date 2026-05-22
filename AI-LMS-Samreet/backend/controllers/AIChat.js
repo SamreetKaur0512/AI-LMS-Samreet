@@ -12,10 +12,13 @@ exports.aiChat = async (req, res) => {
 
   try {
     // Fetch available courses, instructors, and categories
-    const publishedCourses = await Course.find({ status: "Published" })
+    const publishedCourses = await Course.find({
+      status: "Published",
+      isAnonymized: { $ne: true },
+    })
       .populate("instructor", "firstName lastName email image")
       .populate("category", "name")
-      .select("courseName courseDescription whatYouWillLearn price tag instructor category");
+      .select("courseName courseDescription whatYouWillLearn price tag instructor instructorName category");
 
     const categories = await Category.find().select("name description");
 
@@ -31,7 +34,11 @@ AVAILABLE COURSES ON EAUI:
 `;
 
     publishedCourses.forEach((course) => {
-      knowledgeBase += `\n- **${course.courseName}** (Instructor: ${course.instructor.firstName} ${course.instructor.lastName})
+      const instructorName = course.instructor
+        ? `${course.instructor.firstName || ""} ${course.instructor.lastName || ""}`.trim()
+        : course.instructorName || "EduAI Instructor";
+
+      knowledgeBase += `\n- **${course.courseName}** (Instructor: ${instructorName})
   Price: ₹${course.price}
   Description: ${course.courseDescription}
   What You'll Learn: ${course.whatYouWillLearn}

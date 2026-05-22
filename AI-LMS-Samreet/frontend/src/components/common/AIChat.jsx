@@ -68,11 +68,18 @@ const AIChat = () => {
         ])
       }
     } catch (error) {
+      const serverReply = error?.response?.data?.reply
+      const isServerReachable = Boolean(error?.response)
+
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "Server se connect nahi ho pa raha. Thodi der baad try karo.",
+          content:
+            serverReply ||
+            (isServerReachable
+              ? "AI Tutor abhi response nahi de pa raha. Thodi der baad try karo."
+              : "Server se connect nahi ho pa raha. Backend running hai ya URL sahi hai, check karo."),
         },
       ])
     }
